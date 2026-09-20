@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Укладка парашюта — Регламент ВДВ</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #0a1420;
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgba(90, 140, 190, 0.04) 0px,
+        rgba(90, 140, 190, 0.04) 2px,
+        transparent 2px,
+        transparent 20px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(90, 140, 190, 0.03) 0px,
+        rgba(90, 140, 190, 0.03) 2px,
+        transparent 2px,
+        transparent 20px
+      ),
+      radial-gradient(circle at 50% 0%, rgba(70, 130, 180, 0.15) 0%, transparent 60%);
+    color: #b8cce0;
+    font-family: 'Courier New', 'Consolas', monospace;
+    padding: 30px 15px 60px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Шапка */
+  header {
+    border: 1px solid #2a4a6a;
+    border-left: 4px solid #4a8fc8;
+    border-top: 3px solid #4a8fc8;
+    background: linear-gradient(135deg, rgba(20, 40, 65, 0.95) 0%, rgba(10, 20, 32, 0.8) 100%);
+    padding: 24px 25px 20px;
+    margin-bottom: 30px;
+    position: relative;
+  }
+
+  header::before {
+    content: "★ НИКТО КРОМЕ НАС ★";
+    position: absolute;
+    top: -11px;
+    right: 20px;
+    background: #0a1420;
+    color: #4a8fc8;
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 0 10px;
+    font-weight: bold;
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: repeating-linear-gradient(
+      90deg,
+      #4a8fc8 0px,
+      #4a8fc8 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    opacity: 0.4;
+  }
+
+  header .beret {
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    font-size: 32px;
+    opacity: 0.35;
+    color: #4a8fc8;
+  }
+
+  header h1 {
+    color: #6aaede;
+    font-size: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  header .subtitle {
+    color: #5a7a9a;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  header .meta {
+    margin-top: 14px;
+    font-size: 11px;
+    color: #4a6a8a;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  header .meta span::before {
+    content: "▸ ";
+    color: #4a8fc8;
+  }
+
+  /* Карточки блоков */
+  .block {
+    border: 1px solid #2a4a6a;
+    background: rgba(15, 30, 48, 0.7);
+    margin-bottom: 22px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .block:hover {
+    border-color: #4a8fc8;
+    box-shadow: 0 0 0 1px rgba(74, 143, 200, 0.2);
+  }
+
+  .block-header {
+    background: linear-gradient(90deg, rgba(40, 70, 105, 0.85) 0%, rgba(15, 30, 48, 0.4) 100%);
+    border-bottom: 1px solid #2a4a6a;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+
+  .block-header::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #4a8fc8;
+  }
+
+  .block-num {
+    background: #4a8fc8;
+    color: #0a1420;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 3px 9px;
+    letter-spacing: 1px;
+    min-width: 42px;
+    text-align: center;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .block-title {
+    color: #8ab8d8;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+  .block-body {
+    padding: 16px 20px;
+  }
+
+  /* Строки команд */
+  .cmd {
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    padding-left: 6px;
+    border-left: 2px solid transparent;
+  }
+
+  .cmd:last-child {
+    margin-bottom: 0;
+  }
+
+  .cmd .tag {
+    color: #4a8fc8;
+    font-weight: bold;
+    margin-right: 6px;
+  }
+
+  .cmd.me .tag { color: #4a8fc8; }
+  .cmd.do .tag { color: #5ac8a8; }
+  .cmd.try .tag { color: #c8a84a; }
+
+  .cmd.me { border-left-color: rgba(74, 143, 200, 0.35); }
+  .cmd.do { border-left-color: rgba(90, 200, 168, 0.35); }
+  .cmd.try { border-left-color: rgba(200, 168, 74, 0.35); }
+
+  .cmd .text {
+    color: #b8cce0;
+  }
+
+  .cmd.do .text { color: #9ad8c4; }
+  .cmd.try .text { color: #e0c89a; }
+
+  /* Ветки try */
+  .branch {
+    margin-left: 20px;
+    padding-left: 14px;
+    border-left: 1px dashed #2a4a6a;
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+
+  .branch .label {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+
+  .branch .success .label { color: #5ac8a8; }
+  .branch .fail .label { color: #d85a5a; }
+
+  .branch .success .text { color: #8ad8b8; }
+  .branch .fail .text { color: #e08a7a; }
+
+  .branch .cmd {
+    margin-bottom: 4px;
+    font-size: 12.5px;
+  }
+
+  /* Подвал */
+  footer {
+    margin-top: 40px;
+    padding: 20px;
+    border-top: 1px solid #2a4a6a;
+    text-align: center;
+    font-size: 11px;
+    color: #4a6a8a;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  footer .stamp {
+    display: inline-block;
+    border: 2px solid #2a5a8a;
+    color: #6aaede;
+    padding: 6px 18px;
+    margin-bottom: 10px;
+    transform: rotate(-2deg);
+    font-weight: bold;
+    letter-spacing: 3px;
+    background: rgba(74, 143, 200, 0.08);
+  }
+
+  footer .stripes {
+    display: inline-block;
+    width: 40px;
+    height: 3px;
+    background: repeating-linear-gradient(
+      90deg,
+      #4a8fc8 0px,
+      #4a8fc8 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    margin: 0 10px;
+    vertical-align: middle;
+  }
+
+  /* Кнопка копирования */
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    border: 1px solid #2a5a8a;
+    color: #6a9ac0;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover {
+    background: #2a5a8a;
+    color: #c8e0f0;
+    border-color: #4a8fc8;
+  }
+
+  .copy-btn.copied {
+    background: #4a8fc8;
+    color: #0a1420;
+    border-color: #4a8fc8;
+  }
+
+  /* Мобильная адаптация */
+  @media (max-width: 600px) {
+    body { padding: 15px 8px 40px; }
+    header { padding: 18px 14px; }
+    header h1 { font-size: 15px; letter-spacing: 1px; }
+    header::before { font-size: 9px; right: 10px; letter-spacing: 2px; }
+    header .beret { font-size: 22px; top: 14px; right: 14px; }
+    .block-header { padding: 10px 14px; }
+    .block-title { font-size: 12px; letter-spacing: 1px; }
+    .block-body { padding: 12px 14px; }
+    .cmd { font-size: 12.5px; }
+    .branch { margin-left: 10px; padding-left: 10px; }
+    .branch .cmd { font-size: 11.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="beret">🎖</div>
+    <h1>Укладка парашютной системы</h1>
+    <div class="subtitle">ВДВ · Регламент укладки · Д-10</div>
+    <div class="meta">
+      <span>Форма: РУ</span>
+      <span>Объём: 6 блоков</span>
+      <span>Статус: к исполнению</span>
+    </div>
+  </header>
+
+  <!-- Блок 1 -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">01</span>
+      <span class="block-title">Подготовка к укладке</span>
+    </div>
+    <div class="block-body">
+      <div class="cmd me"><span class="tag">/me</span><span class="text">снял парашютную систему с плеч и перенёс её на укладочный стол.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Парашютная система лежит на столе, рюкзак расстёгнут.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">проверил наличие паспорта и формуляра парашюта.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Формуляр в наличии, срок очередного осмотра не истёк.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">разложил парашютную систему на столе клапанами вверх.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Система разложена ровно, доступ к клапанам открыт.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">подготовил инструмент: крючок для укладки и монтажную лопатку.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Инструмент разложен рядом на столе.</span></div>
+    </div>
+  </div>
+
+  <!-- Блок 2 -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">02</span>
+      <span class="block-title">Осмотр купола</span>
+    </div>
+    <div class="block-body">
+      <div class="cmd me"><span class="tag">/me</span><span class="text">извлёк купол из рюкзака и расправил его на столе по всей длине.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Купол расправлен, полотнище лежит ровно без складок.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">осмотрел полотнище купола по всей площади.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Разрывов, порезов и потёртостей полотнища не обнаружено.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">проверил кромку и угловые усиления купола.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Усиления целые, прошивка не повреждена.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">осмотрел каждую секцию купола на просвет.</span></div>
+      <div class="cmd try"><span class="tag">/try</span><span class="text">обнаружил скрытые дефекты полотнища</span></div>
+      <div class="branch">
+        <div class="cmd do success"><span class="label">✓ Успех:</span><span class="text">/do Полотнище целое, дефектов не найдено.</span></div>
+        <div class="cmd do fail"><span class="label">✗ Провал:</span><span class="text">/do На третьей секции видна мелкая потёртость, требуется пометка.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок 3 -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">03</span>
+      <span class="block-title">Осмотр строп</span>
+    </div>
+    <div class="block-body">
+      <div class="cmd me"><span class="tag">/me</span><span class="text">разложил стропы в стороны и проверил их на запутывание.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Стропы свободно разошлись, узлов и перехлёстов нет.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">осмотрел каждую стропу на предмет потёртостей и надрывов.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Стропы целые, прошивка и оплётка не повреждены.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">проверил места крепления строп к куполу.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Точки крепления надёжны, нитки не ослаблены.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">проверил звенья свободного конца подвесной системы.</span></div>
+      <div class="cmd try"><span class="tag">/try</span><span class="text">обнаружил износ звеньев подвесной системы</span></div>
+      <div class="branch">
+        <div class="cmd do success"><span class="label">✓ Успех:</span><span class="text">/do Звенья целые, кольца исправны.</span></div>
+        <div class="cmd do fail"><span class="label">✗ Провал:</span><span class="text">/do На правом звене замечен потёртый участок, требуется замена.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок 4 -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">04</span>
+      <span class="block-title">Укладка купола</span>
+    </div>
+    <div class="block-body">
+      <div class="cmd me"><span class="tag">/me</span><span class="text">собрал стропы в пучок и аккуратно расправил купол.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Купол расправлен, стропы уложены ровно.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">удалил воздух из купола, проглаживая полотнище ладонями.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Купол равномерно примят, воздушных полостей нет.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">сложил купол гармошкой, укладывая секции одна на другую.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Купол сложен гармошкой, секции ровные.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">свернул уложенный купол в несколько приёмов.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Купол свёрнут, форма сохранена.</span></div>
+    </div>
+  </div>
+
+  <!-- Блок 5 -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">05</span>
+      <span class="block-title">Заправка строп и клапанов</span>
+    </div>
+    <div class="block-body">
+      <div class="cmd me"><span class="tag">/me</span><span class="text">уложил стропы в зигзаг между клапанами ранца.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Стропы уложены зигзагом, петли ровные.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">проверил, что стропы не перехлёстнуты и не выходят за борта.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Стропы лежат правильно, перехлёстов нет.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">затянул клапаны ранца в порядке: нижние, боковые, верхние.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Клапаны закрыты, шпильки замка вставлены в люверсы.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">проверил замыкание шпилек замка ОСК.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Замок замыкает шпильки, контрольная нить целая.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">установил прибор страхования.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Прибор страхования установлен, чек-фал зафиксирован.</span></div>
+    </div>
+  </div>
+
+  <!-- Блок 6 -->
+  <div class="block">
+    <div class="block-header">
+      <span class="block-num">06</span>
+      <span class="block-title">Проверка и сдача</span>
+    </div>
+    <div class="block-body">
+      <div class="cmd me"><span class="tag">/me</span><span class="text">убрал уложенный парашют в рюкзак и закрыл его.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Рюкзак закрыт, клапаны зафиксированы.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">проверил крепление ранца, лямок и подвесной системы.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Лямки отрегулированы, карабины затянуты.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">надел рюкзак на плечи и проверил посадку.</span></div>
+      <div class="cmd do"><span class="tag">/do</span><span class="text">Система сидит плотно, крепления не мешают движению.</span></div>
+      <div class="cmd me"><span class="tag">/me</span><span class="text">расписался в журнале укладки и передал систему выпускающему.</span></div>
+      <div class="cmd try"><span class="tag">/try</span><span class="text">выпускающий принял укладку</span></div>
+      <div class="branch">
+        <div class="cmd do success"><span class="label">✓ Успех:</span><span class="text">/do Укладка принята, замечаний нет.</span></div>
+        <div class="cmd do fail"><span class="label">✗ Провал:</span><span class="text">/do Выпускающий вернул систему на повторную проверку.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="stamp">К ПРЫЖКУ ГОТОВ</div>
+    <div>
+      <span class="stripes"></span>
+      ВДВ · Регламент укладки · Д-10
+      <span class="stripes"></span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.block').forEach(block => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Копировать';
+    block.querySelector('.block-header').appendChild(btn);
+
+    btn.addEventListener('click', () => {
+      const lines = [];
+      block.querySelectorAll('.cmd').forEach(cmd => {
+        const tag = cmd.querySelector('.tag');
+        const text = cmd.querySelector('.text');
+        if (tag && text) {
+          lines.push(tag.textContent + ' ' + text.textContent);
+        }
+      });
+      block.querySelectorAll('.branch .cmd').forEach(cmd => {
+        const label = cmd.querySelector('.label');
+        const text = cmd.querySelector('.text');
+        if (label && text) {
+          lines.push('  ' + label.textContent + ' ' + text.textContent);
+        }
+      });
+
+      navigator.clipboard.writeText(lines.join('\n')).then(() => {
+        btn.textContent = 'Скопировано';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Копировать';
+          btn.classList.remove('copied');
+        }, 1500);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
