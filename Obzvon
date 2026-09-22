@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Обзвон ГРУ — Форма Старшего Инструктора</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#161b22; --border:#30363d;
+    --green:#3fb950; --red:#f85149; --yellow:#d29922;
+    --blue:#58a6ff; --text:#c9d1d9; --muted:#8b949e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    line-height:1.6; padding:20px; max-width:1100px; margin:0 auto;
+  }
+  h1{
+    text-align:center; color:#fff; font-size:2em;
+    border-bottom:2px solid var(--green); padding-bottom:15px; margin-bottom:25px;
+  }
+  h2{
+    color:var(--green); font-size:1.4em; margin:30px 0 15px;
+    border-left:4px solid var(--green); padding-left:12px;
+  }
+  h3{color:var(--blue); font-size:1.1em; margin:20px 0 10px;}
+  .card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:8px; padding:20px; margin-bottom:20px;
+  }
+  .stage{
+    background:linear-gradient(135deg,#1c2128,#161b22);
+    border-left:4px solid var(--blue);
+  }
+  table{width:100%; border-collapse:collapse; margin:10px 0;}
+  th,td{
+    border:1px solid var(--border); padding:10px;
+    text-align:left; font-size:0.95em;
+  }
+  th{background:#21262d; color:#fff;}
+  tr:nth-child(even){background:#1c2128;}
+  .q{margin-bottom:18px; padding:12px; background:#1c2128; border-radius:6px;}
+  .q-text{color:#fff; font-weight:600; margin-bottom:6px;}
+  .q-answer{color:var(--muted); padding-left:15px; border-left:2px solid var(--green);}
+  .tag{
+    display:inline-block; padding:2px 8px; border-radius:4px;
+    font-size:0.8em; font-weight:600; margin-right:6px;
+  }
+  .tag-red{background:var(--red); color:#fff;}
+  .tag-green{background:var(--green); color:#fff;}
+  .tag-yellow{background:var(--yellow); color:#000;}
+  .tag-blue{background:var(--blue); color:#000;}
+  .warn{
+    background:#2d1618; border:1px solid var(--red);
+    border-radius:6px; padding:15px; margin:15px 0;
+  }
+  .warn-title{color:var(--red); font-weight:700; margin-bottom:8px;}
+  .ok{
+    background:#12261a; border:1px solid var(--green);
+    border-radius:6px; padding:15px; margin:15px 0;
+  }
+  .ok-title{color:var(--green); font-weight:700; margin-bottom:8px;}
+  ul{padding-left:25px; margin:10px 0;}
+  li{margin-bottom:6px;}
+  .footer{
+    text-align:center; color:var(--muted); font-size:0.85em;
+    margin-top:40px; padding-top:20px; border-top:1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<h1>🎖️ ОБЗВОН ГРУ<br><span style="font-size:0.6em;color:var(--muted)">Форма Старшего Инструктора</span></h1>
+
+<!-- ЭТАП 1 -->
+<div class="card stage">
+  <h2>📝 ЭТАП 1. ПОДГОТОВКА</h2>
+  <p><strong>Перед обзвоном Старший Инструктор обязан:</strong></p>
+  <ul>
+    <li>Проверить отчёт кандидата: <strong>форма → доказательства → дисциплина</strong>.</li>
+    <li>Убедиться, что баллы набраны по нормативу.</li>
+    <li>Убедиться, что нет <span class="tag tag-red">WARN</span> в планшете.</li>
+    <li>Уведомить кандидата о дате и времени обзвона <strong>не позднее чем за 24 часа</strong>.</li>
+    <li>Подготовить вопросы (по блокам ниже).</li>
+    <li>Включить бодикамеру — обзвон фиксируется.</li>
+  </ul>
+  <div class="ok">
+    <div class="ok-title">Форма уведомления:</div>
+    «[Звание, ФИО], вы допущены к обзвону на повышение до [целевое звание]. Обзвон состоится [дата, время] в [место]. Явка обязательна. Старший Инструктор [ФИО]».
+  </div>
+</div>
+
+<!-- ЭТАП 2 -->
+<div class="card stage">
+  <h2>🎤 ЭТАП 2. ПРОВЕДЕНИЕ ОБЗВОНА</h2>
+  <p><strong>Порядок:</strong></p>
+  <ol style="padding-left:25px;">
+    <li><strong>Представиться:</strong> «Я [звание, ФИО], Старший Инструктор ГРУ. Провожу обзвон на повышение до [целевое звание]».</li>
+    <li>Установить личность кандидата (удостоверение).</li>
+    <li>Объяснить порядок: вопросы по блокам, время на ответ, запрет подсказок.</li>
+    <li>Задать вопросы (см. блоки ниже).</li>
+    <li>Зафиксировать ответы на бодикамеру.</li>
+    <li>Огласить результат.</li>
+  </ol>
+</div>
+
+<!-- БЛОК 1 -->
+<div class="card">
+  <h2>📚 БЛОК 1. ОБЩИЕ ПОЛОЖЕНИЯ (Устав ВС и ФСВНГ)</h2>
+
+  <div class="q">
+    <div class="q-text">В1: Что такое воинская дисциплина?</div>
+    <div class="q-answer">Сознательное исполнение обязанностей, соблюдение субординации, уважение к службе и достоинству других, бережное отношение к имуществу (ДУ, ст. 2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В2: Что делать при заведомо незаконном приказе?</div>
+    <div class="q-answer">Не исполнять, доложить непосредственному или вышестоящему начальнику (Устав ВС и ФСВНГ, ст. 1.3).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В3: Какие виды дисциплинарных взысканий существуют?</div>
+    <div class="q-answer">Беседа, устный выговор (1 активный), строгий выговор (2 активных), понижение, увольнение (ДУ, ст. 6).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В4: Сколько активных выговоров ведут к увольнению?</div>
+    <div class="q-answer">Три (ДУ, ст. 6.1).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В5: Рабочий день ВС и ФСВНГ?</div>
+    <div class="q-answer">С 11:00 до 21:30 (Устав ВС и ФСВНГ, ст. 2.1).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В6: Обеденное время?</div>
+    <div class="q-answer">С 18:00 до 19:00 (Устав ВС и ФСВНГ, ст. 2.2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В7: Увольнительное время для младшего сержанта и выше?</div>
+    <div class="q-answer">60 минут в день (можно разбить на 2×30). После окончания службы — выход при отсутствии ограничений (Устав ВС и ФСВНГ, ст. 2.6).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В8: Когда обязаны предъявить удостоверение?</div>
+    <div class="q-answer">При исполнении служебных обязанностей или проведении процессуальных действий по требованию гражданина (ФЗ «Об обороне», ст. 9.1; ФЗ № 1, ст. 41).</div>
+  </div>
+</div>
+
+<!-- БЛОК 2 -->
+<div class="card">
+  <h2>📚 БЛОК 2. КАРАУЛЬНО-ПОСТОВАЯ СЛУЖБА (УКПС)</h2>
+
+  <div class="q">
+    <div class="q-text">В9: Кто может заступить на пост?</div>
+    <div class="q-answer">Любой военнослужащий со звания Рядовой (УКПС, ст. 19).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В10: Что запрещено на посту?</div>
+    <div class="q-answer">Спать, сидеть, прислоняться, читать, писать, петь, есть, пить, курить, принимать/передавать предметы, справлять нужды, досылать патрон, использовать личную связь, танцевать (УКПС, ст. 36).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В11: Что такое режимный объект?</div>
+    <div class="q-answer">Территория внутри периметра части, доступ через КПП №1 и №2. Внешняя сторона КПП — не режимный объект (УКПС, ст. 37).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В12: Кто проходит через КПП №2?</div>
+    <div class="q-answer">Колонны снабжения, призывные колонны, служебный транспорт, патрули, правительственные кортежи — только при закрытии КПП №1 или по приказу (УКПС, ст. 32).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В13: Что делать при попытке проникновения?</div>
+    <div class="q-answer">Доложить по рации, включить бодикамеру, пресечь в пределах полномочий, вызвать ВП/дежурного, передать задержанного (УКПС, ст. 29).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В14: Что делать при ухудшении здоровья на посту?</div>
+    <div class="q-answer">Доложить дежурному/старшему наряда, вызвать медпомощь. Покинуть пост только после сдачи сменяющему (УКПС, ст. 26.1).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В15: Кто освобождён от проверок на КПП?</div>
+    <div class="q-answer">Генерал-лейтенант и выше — освобождены, постовые обязаны знать их в лицо (УКПС, ст. 31).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В16: Что проверяет постовой на КПП №1 у убывающих?</div>
+    <div class="q-answer">Документы, увольнительную (при необходимости), при выходе в гражданской форме — подтверждение сдачи оружия (УКПС, ст. 30).</div>
+  </div>
+</div>
+
+<!-- БЛОК 3 -->
+<div class="card">
+  <h2>📚 БЛОК 3. ОРУЖИЕ И СПЕЦСРЕДСТВА</h2>
+
+  <div class="q">
+    <div class="q-text">В17: Когда разрешено применять оружие?</div>
+    <div class="q-answer">Для защиты, пресечения попытки завладеть оружием, освобождения заложников, задержания опасных преступников, предупредительного выстрела, пресечения проникновения, остановки ТС, обезвреживания животных (ФЗ «Об обороне», ст. 17).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В18: Когда оружие применяется без предупреждения?</div>
+    <div class="q-answer">При отражении вооружённого нападения (ФЗ «Об обороне», ст. 17, п. 3.2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В19: Можно ли брать оружие при выходе из части?</div>
+    <div class="q-answer">Нет. От рядового до подполковника — при выходе в гражданской форме обязаны сдать оружие на склад. Исключение: ССО, ГРУ, ВП при служебной задаче (Устав ВС и ФСВНГ, ст. 3.4.2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В20: Где хранится оружие?</div>
+    <div class="q-answer">В разряженном состоянии, с предохранителем, в сейфе (ФЗ № 8, гл. VIII, ст. 2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В21: Когда бодикамера обязательна?</div>
+    <div class="q-answer">ВП, ОСБ, КПП, патрули, задержания, все мероприятия ВС, включая поставки (Устав ВС и ФСВНГ, ст. 3.5).</div>
+  </div>
+</div>
+
+<!-- БЛОК 4 -->
+<div class="card">
+  <h2>📚 БЛОК 4. ПОСТАВКИ</h2>
+
+  <div class="q">
+    <div class="q-text">В22: Время поставок Армии?</div>
+    <div class="q-answer">С 13:00 до 22:15 (Правила поставок, п. 3.1).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В23: Минимум участников и техники?</div>
+    <div class="q-answer">Минимум 6 человек, максимум 60. Минимум 4 наземных ТС (п. 2.1, 2.1.1, 2.1.4).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В24: Минимальный объём груза?</div>
+    <div class="q-answer">Оружейные — 3000, медицинские — 3000, технические — 1500 (п. 2.1.2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В25: Что делать при нападении?</div>
+    <div class="q-answer">Остановиться и начать перестрелку (п. 1.4).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В26: Можно ли вызывать подкрепление?</div>
+    <div class="q-answer">Нет, кроме повторного нападения или рейда (п. 2.3).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В27: Сколько видеозаписей требуется?</div>
+    <div class="q-answer">Минимум 2 (загрузка, звук, 720p+, хранить 72 часа) (п. 2.4, 3.4).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В28: Безопасный час для госпоставок?</div>
+    <div class="q-answer">С 15:00 до 16:00, не более 1 поставки и до 15 000 материалов (п. 1.9–1.9.2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В29: Где запрещено поджидать организации?</div>
+    <div class="q-answer">Менее 150 м от точки загрузки/выгрузки. Для Армии — 300 м от КПП-1/КПП-2 (п. 1.6).</div>
+  </div>
+</div>
+
+<!-- БЛОК 5 -->
+<div class="card">
+  <h2>📚 БЛОК 5. МЕДИЦИНСКОЕ ОБЕСПЕЧЕНИЕ</h2>
+
+  <div class="q">
+    <div class="q-text">В30: Как часто проводятся медосмотры?</div>
+    <div class="q-answer">Ежедневно, выборочно, по расписанию МР (Устав ВС и ФСВНГ, ст. 2.10).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В31: Что делать при ухудшении здоровья на посту?</div>
+    <div class="q-answer">Доложить, вызвать медпомощь, сдать пост сменяющему (УКПС, ст. 26.1).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В32: Кто может выдавать заключение об освобождении?</div>
+    <div class="q-answer">Только уполномоченный медицинский работник (военный врач или иной допущенный) (Устав ВС и ФСВНГ, ст. 9.3).</div>
+  </div>
+</div>
+
+<!-- БЛОК 6 -->
+<div class="card">
+  <h2>📚 БЛОК 6. ДИСЦИПЛИНАРНАЯ ПРАКТИКА</h2>
+
+  <div class="q">
+    <div class="q-text">В33: Можете ли вы назначить выговор?</div>
+    <div class="q-answer">Нет. Инструктор выявляет, фиксирует и готовит материалы. Решение принимает уполномоченное лицо (Положение, гл. VII).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В34: Что делать при нарушении субординации?</div>
+    <div class="q-answer">Зафиксировать, получить объяснение, подготовить материалы, доложить командиру (ДУ, ст. 8).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В35: Сколько времени даётся на отработку активного выговора?</div>
+    <div class="q-answer">48 часов. При просрочке — дополнительный выговор (ДУ, ст. 6.1).</div>
+  </div>
+</div>
+
+<!-- БЛОК 7 -->
+<div class="card">
+  <h2>📚 БЛОК 7. СИТУАЦИОННЫЕ ЗАДАЧИ</h2>
+
+  <div class="q">
+    <div class="q-text">В36: Вы на поставке. Колонна остановлена, началась перестрелка. Действия?</div>
+    <div class="q-answer">Действовать в пределах необходимой обороны, доложить по рации, вызвать группу реагирования (Устав ВС и ФСВНГ, ст. 7.1.2).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В37: Подчинённый отказывается выполнить законный приказ. Действия?</div>
+    <div class="q-answer">Зафиксировать отказ, доложить командиру, подготовить материалы по ст. 8 ДУ.</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В38: Вы обнаружили у военнослужащего оружие при выходе в гражданской форме. Действия?</div>
+    <div class="q-answer">Не допускать выход, направить на склад вооружения, доложить дежурному (УКПС, ст. 30).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В39: Гражданский на КПП мешает выезду служебного транспорта, на требования не реагирует. Действия?</div>
+    <div class="q-answer">Представиться, сделать замечание, доложить по рации, вызвать МВД через дежурного, не покидать пост, не применять силу (УКПС, ст. 36).</div>
+  </div>
+  <div class="q">
+    <div class="q-text">В40: Военнослужащий покидает часть без увольнительной. Действия?</div>
+    <div class="q-answer">Не пропускать, доложить дежурному/ВП, удерживать до прибытия наряда (УКПС, ст. 30; УК РО, ст. 109).</div>
+  </div>
+</div>
+
+<!-- ЭТАП 3 -->
+<div class="card stage">
+  <h2>📊 ЭТАП 3. ОЦЕНКА И РЕШЕНИЕ</h2>
+  <table>
+    <tr><th>Уровень</th><th>Критерий</th><th>Решение</th></tr>
+    <tr><td><span class="tag tag-green">Отлично</span></td><td>90%+ верно, чёткие ответы со ссылками</td><td>✅ Допуск</td></tr>
+    <tr><td><span class="tag tag-blue">Хорошо</span></td><td>75–89% верно</td><td>✅ Допуск</td></tr>
+    <tr><td><span class="tag tag-yellow">Удовл.</span></td><td>60–74% верно</td><td>⚠️ Допуск с доработкой</td></tr>
+    <tr><td><span class="tag tag-red">Неудовл.</span></td><td>&lt;60% верно</td><td>❌ Отказ</td></tr>
+  </table>
+
+  <div class="ok">
+    <div class="ok-title">Формулировка допуска:</div>
+    «Обзвон пройден успешно. Вы допущены к повышению до [целевое звание]. Ожидайте приказа».
+  </div>
+
+  <div class="warn">
+    <div class="warn-title">Формулировка отказа:</div>
+    «Обзвон не пройден. Причина: [указать]. Повторный обзвон — не ранее чем через 3 дня».
+  </div>
+</div>
+
+<!-- ЧЕК-ЛИСТ -->
+<div class="card stage">
+  <h2>📋 ЧЕК-ЛИСТ СТАРШЕГО ИНСТРУКТОРА</h2>
+  <ul>
+    <li>✅ Проверить отчёт (форма → доказательства → дисциплина).</li>
+    <li>✅ Убедиться в баллах и отсутствии WARN.</li>
+    <li>✅ Уведомить за 24 часа.</li>
+    <li>✅ Включить бодикамеру.</li>
+    <li>✅ Провести обзвон по блокам.</li>
+    <li>✅ Огласить результат.</li>
+    <li>✅ Внести запись в Кадровый аудит.</li>
+    <li>✅ Поставить ✅ в запросе.</li>
+    <li>✅ Передать Майору для повышения в игре.</li>
+  </ul>
+</div>
+
+<div class="footer">
+  ГРУ — СИЛА В ТЕНИ · Форма обзвона · Старший Инструктор
+</div>
+
+</body>
+</html>
