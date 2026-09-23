@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ГРУ · ВДВ · ПРОФОТБОР HARD</title>
+<style>
+  :root{
+    --bg:#0a0f14; --card:#111820; --card2:#182230; --border:#243244;
+    --gru:#00a8e8; --vdv:#4fc3f7; --green:#4caf50; --red:#e53935;
+    --yellow:#ffb300; --text:#d0d8e0; --muted:#7a8899; --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,rgba(0,168,232,0.05) 0%,transparent 300px),
+    repeating-linear-gradient(45deg,#0a0f14,#0a0f14 10px,#0c1219 10px,#0c1219 20px);
+    color:var(--text); font-family:'Courier New',monospace;
+    line-height:1.6; padding:20px; max-width:1000px; margin:0 auto;
+  }
+  header{
+    text-align:center; padding:35px 20px;
+    background:linear-gradient(135deg,#111820,#182230);
+    border:2px solid var(--gru); border-radius:4px; margin-bottom:25px;
+    position:relative;
+  }
+  header::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg,var(--gru),var(--vdv),var(--gru));
+  }
+  header h1{
+    color:var(--white); font-size:2.2em; letter-spacing:4px;
+    text-transform:uppercase; text-shadow:0 0 20px rgba(0,168,232,0.6);
+    margin-bottom:10px;
+  }
+  header h1 span{color:var(--gru);}
+  header p{color:var(--vdv); font-size:0.9em; letter-spacing:2px; text-transform:uppercase;}
+  .badge{
+    display:inline-block; background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; padding:6px 18px; border-radius:2px;
+    font-size:0.75em; font-weight:700; margin-top:10px;
+    letter-spacing:2px; text-transform:uppercase;
+  }
+  .section{
+    background:var(--card); border:1px solid var(--border);
+    border-left:4px solid var(--gru); border-radius:4px;
+    padding:20px; margin-bottom:20px;
+  }
+  .section-title{
+    color:var(--vdv); font-size:1.1em; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:5px; display:flex; align-items:center; gap:10px;
+  }
+  .section-title::before{content:"◤"; color:var(--gru);}
+  .section-desc{color:var(--muted); font-size:0.8em; letter-spacing:1px; margin-bottom:15px; padding-left:20px;}
+  .q{
+    background:var(--card2); border:1px solid var(--border);
+    border-radius:3px; padding:15px; margin-bottom:12px;
+  }
+  .q:hover{border-color:var(--gru);}
+  .q-num{
+    display:inline-block; background:var(--gru); color:#000;
+    width:28px; height:28px; line-height:28px; text-align:center;
+    font-weight:700; font-size:0.85em; margin-right:10px;
+  }
+  .q-text{color:var(--white); font-weight:700; margin-bottom:12px; display:inline;}
+  .options{display:flex; flex-direction:column; gap:6px; margin-top:10px;}
+  .option{
+    background:#0d141c; border:1px solid var(--border);
+    border-radius:3px; padding:10px 14px; cursor:pointer;
+    transition:all 0.2s; font-size:0.9em; display:flex; align-items:center;
+  }
+  .option:hover{border-color:var(--vdv); background:#141d28; padding-left:18px;}
+  .option input{margin-right:10px; accent-color:var(--gru);}
+  button{
+    background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; border:none; padding:16px 30px; border-radius:3px;
+    font-size:1.1em; font-weight:700; cursor:pointer; width:100%;
+    transition:all 0.2s; margin-top:10px; letter-spacing:3px;
+    text-transform:uppercase; font-family:'Courier New',monospace;
+  }
+  button:hover{box-shadow:0 0 25px rgba(0,168,232,0.6); transform:translateY(-2px);}
+  #result{
+    display:none; margin-top:20px; padding:25px;
+    border-radius:4px; border:2px solid var(--border);
+    background:var(--card2);
+  }
+  #result.show{display:block; animation:fadeIn 0.5s;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  .result-pass{border-color:var(--green); box-shadow:0 0 30px rgba(76,175,80,0.3);}
+  .result-warn{border-color:var(--yellow); box-shadow:0 0 30px rgba(255,179,0,0.3);}
+  .result-fail{border-color:var(--red); box-shadow:0 0 30px rgba(229,57,53,0.3);}
+  .result-title{font-size:1.5em; font-weight:700; margin-bottom:15px; letter-spacing:3px; text-transform:uppercase; text-align:center;}
+  .pass{color:var(--green);}
+  .warn{color:var(--yellow);}
+  .fail{color:var(--red);}
+  .score-table{width:100%; border-collapse:collapse; margin-top:15px;}
+  .score-table th,.score-table td{border:1px solid var(--border); padding:10px; text-align:left; font-size:0.9em;}
+  .score-table th{background:#0d141c; color:var(--vdv); text-transform:uppercase; letter-spacing:1px; font-size:0.8em;}
+  .footer{
+    text-align:center; color:var(--muted); font-size:0.75em;
+    margin-top:40px; padding-top:20px;
+    border-top:1px solid var(--border); letter-spacing:3px; text-transform:uppercase;
+  }
+  .footer-star{color:var(--gru); margin:0 10px;}
+  .motto{text-align:center; color:var(--vdv); font-style:italic; font-size:0.9em; margin:20px 0; letter-spacing:1px; opacity:0.8;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ГРУ <span>·</span> ВДВ</h1>
+  <p>Профессиональный отбор · HARD MODE</p>
+  <div class="badge">НИКТО, КРОМЕ НАС</div>
+</header>
+
+<div class="motto">«Видеть больше. Действовать раньше.»</div>
+
+<form id="quizForm">
+
+  <!-- БЛОК 1. ОРУЖИЕ И СИЛА (10) -->
+  <div class="section">
+    <div class="section-title">Блок 1 · Оружие и применение силы</div>
+    <div class="section-desc">► Ситуации, а не цифры</div>
+
+    <div class="q">
+      <span class="q-num">01</span>
+      <span class="q-text">Пьяный гражданский с ножом идёт на тебя у КПП. Дистанция — 10 метров. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" value="0"> Стрелять на поражение сразу</label>
+        <label class="option"><input type="radio" name="q1" value="1"> Предупредить, применить спецсредства, при продолжении — оружие</label>
+        <label class="option"><input type="radio" name="q1" value="0"> Убежать</label>
+        <label class="option"><input type="radio" name="q1" value="0"> Кричать в рацию</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">02</span>
+      <span class="q-text">Гражданский отказывается показать документы, но не агрессивен. Ты на КПП. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="0"> Задержать силой</label>
+        <label class="option"><input type="radio" name="q2" value="1"> Не пропускать, доложить, вызвать ВП/МВД</label>
+        <label class="option"><input type="radio" name="q2" value="0"> Пропустить</label>
+        <label class="option"><input type="radio" name="q2" value="0"> Применить оружие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">03</span>
+      <span class="q-text">Коллега нарушил устав на твоих глазах. Он — твой друг. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q3" value="0"> Промолчать</label>
+        <label class="option"><input type="radio" name="q3" value="1"> Зафиксировать, доложить командиру</label>
+        <label class="option"><input type="radio" name="q3" value="0"> Наказать самому</label>
+        <label class="option"><input type="radio" name="q3" value="0"> Обсудить с другими</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">04</span>
+      <span class="q-text">На тебя напали с оружием. Патрон в патроннике, предохранитель снят. Когда стреляешь без предупреждения?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q4" value="0"> После предупреждения</label>
+        <label class="option"><input type="radio" name="q4" value="1"> Немедленно</label>
+        <label class="option"><input type="radio" name="q4" value="0"> После выстрела в воздух</label>
+        <label class="option"><input type="radio" name="q4" value="0"> Только в ногу</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">05</span>
+      <span class="q-text">У гражданина при досмотре найдено оружие с нечитаемым номером. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q5" value="0"> Отпустить, если есть лицензия</label>
+        <label class="option"><input type="radio" name="q5" value="1"> Задержать, доложить, изъять оружие</label>
+        <label class="option"><input type="radio" name="q5" value="0"> Оштрафовать</label>
+        <label class="option"><input type="radio" name="q5" value="0"> Спросить, откуда</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">06</span>
+      <span class="q-text">Служебное оружие пропало во время твоего дежурства. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q6" value="0"> Купить новое</label>
+        <label class="option"><input type="radio" name="q6" value="1"> Немедленно доложить, зафиксировать, искать</label>
+        <label class="option"><input type="radio" name="q6" value="0"> Скрыть</label>
+        <label class="option"><input type="radio" name="q6" value="0"> Сказать, что не выдавали</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">07</span>
+      <span class="q-text">Гражданский на КПП пытается пройти силой, оружия нет. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q7" value="0"> Застрелить</label>
+        <label class="option"><input type="radio" name="q7" value="1"> Пресечь физической силой, доложить, вызвать ВП/МВД</label>
+        <label class="option"><input type="radio" name="q7" value="0"> Отойти</label>
+        <label class="option"><input type="radio" name="q7" value="0"> Пропустить</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">08</span>
+      <span class="q-text">Ты видишь, что сотрудник ВП нарушает закон. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q8" value="0"> Промолчать</label>
+        <label class="option"><input type="radio" name="q8" value="1"> Зафиксировать, доложить в ОСБ/командованию</label>
+        <label class="option"><input type="radio" name="q8" value="0"> Обсудить с ним лично</label>
+        <label class="option"><input type="radio" name="q8" value="0"> Написать в соцсети</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">09</span>
+      <span class="q-text">Гражданский при задержании вырывается. Ты применил спецсредства, он успокоился. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q9" value="0"> Продолжить применение</label>
+        <label class="option"><input type="radio" name="q9" value="1"> Прекратить применение, оказать помощь, доложить</label>
+        <label class="option"><input type="radio" name="q9" value="0"> Отпустить</label>
+        <label class="option"><input type="radio" name="q9" value="0"> Применить оружие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">10</span>
+      <span class="q-text">Ты в отпуске, в гражданской одежде. Видишь преступление. У тебя есть табельное оружие. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q10" value="0"> Применить оружие</label>
+        <label class="option"><input type="radio" name="q10" value="1"> Вызвать МВД, сообщить, действовать в пределах необходимой обороны</label>
+        <label class="option"><input type="radio" name="q10" value="0"> Пройти мимо</label>
+        <label class="option"><input type="radio" name="q10" value="0"> Задержать самому с оружием</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 2. ПОСТОВАЯ СЛУЖБА (10) -->
+  <div class="section">
+    <div class="section-title">Блок 2 · Постовая служба</div>
+    <div class="section-desc">► Реальные ситуации на посту</div>
+
+    <div class="q">
+      <span class="q-num">11</span>
+      <span class="q-text">На посту ночью ты видишь, как 2 неизвестных лезут через забор. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q11" value="0"> Побежать ловить</label>
+        <label class="option"><input type="radio" name="q11" value="1"> Доложить по рации (Код-3), включить камеру, не покидать пост</label>
+        <label class="option"><input type="radio" name="q11" value="0"> Стрелять</label>
+        <label class="option"><input type="radio" name="q11" value="0"> Кричать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">12</span>
+      <span class="q-text">Полковник проходит через КПП в гражданской форме. Что ты делаешь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q12" value="0"> Не проверяю</label>
+        <label class="option"><input type="radio" name="q12" value="1"> Проверяю удостоверение, подтверждение сдачи оружия</label>
+        <label class="option"><input type="radio" name="q12" value="0"> Требую увольнительную</label>
+        <label class="option"><input type="radio" name="q12" value="0"> Сразу пропускаю</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">13</span>
+      <span class="q-text">КПП №1 закрыт на ремонт. Что происходит с КПП №2?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q13" value="0"> Не используется</label>
+        <label class="option"><input type="radio" name="q13" value="1"> Используется для колонн, патрулей, кортежей</label>
+        <label class="option"><input type="radio" name="q13" value="0"> Используется только для гражданских</label>
+        <label class="option"><input type="radio" name="q13" value="0"> Только для личного транспорта</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">14</span>
+      <span class="q-text">Гражданский стоит перед воротами и мешает выезду служебного транспорта, не реагирует. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q14" value="0"> Применить силу</label>
+        <label class="option"><input type="radio" name="q14" value="1"> Представиться, доложить, вызвать МВД, не покидать пост</label>
+        <label class="option"><input type="radio" name="q14" value="0"> Задержать</label>
+        <label class="option"><input type="radio" name="q14" value="0"> Проигнорировать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">15</span>
+      <span class="q-text">Военнослужащий убывает без увольнительной. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q15" value="0"> Пропустить</label>
+        <label class="option"><input type="radio" name="q15" value="1"> Не пропускать, доложить, удерживать до ВП</label>
+        <label class="option"><input type="radio" name="q15" value="0"> Отпустить с предупреждением</label>
+        <label class="option"><input type="radio" name="q15" value="0"> Стрелять</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">16</span>
+      <span class="q-text">Ты на посту. У тебя резко заболело сердце. Что делаешь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q16" value="0"> Уйти домой</label>
+        <label class="option"><input type="radio" name="q16" value="1"> Доложить, вызвать помощь, сдать пост сменяющему</label>
+        <label class="option"><input type="radio" name="q16" value="0"> Терпеть</label>
+        <label class="option"><input type="radio" name="q16" value="0"> Позвонить жене</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">17</span>
+      <span class="q-text">Ты на посту, у тебя в руках оружие. Гражданский просит дать подержать. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q17" value="0"> Дать посмотреть</label>
+        <label class="option"><input type="radio" name="q17" value="1"> Отказать, доложить, не передавать оружие</label>
+        <label class="option"><input type="radio" name="q17" value="0"> Продать</label>
+        <label class="option"><input type="radio" name="q17" value="0"> Обменять</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">18</span>
+      <span class="q-text">Начальник караула отдал приказ, противоречащий уставу. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q18" value="0"> Выполнить</label>
+        <label class="option"><input type="radio" name="q18" value="1"> Не выполнять, доложить вышестоящему</label>
+        <label class="option"><input type="radio" name="q18" value="0"> Спорить при всех</label>
+        <label class="option"><input type="radio" name="q18" value="0"> Уйти</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">19</span>
+      <span class="q-text">Гражданский на КПП говорит, что он «из ФСБ», но удостоверение не показывает. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q19" value="0"> Пропустить</label>
+        <label class="option"><input type="radio" name="q19" value="1"> Не пропускать, доложить, вызвать дежурного</label>
+        <label class="option"><input type="radio" name="q19" value="0"> Задержать</label>
+        <label class="option"><input type="radio" name="q19" value="0"> Применить силу</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">20</span>
+      <span class="q-text">На посту ты обнаружил, что бодикамера не работает. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q20" value="0"> Продолжать службу молча</label>
+        <label class="option"><input type="radio" name="q20" value="1"> Доложить старшему, зафиксировать в журнале</label>
+        <label class="option"><input type="radio" name="q20" value="0"> Уйти с поста</label>
+        <label class="option"><input type="radio" name="q20" value="0"> Скрыть</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 3. ПОСТАВКИ (10) -->
+  <div class="section">
+    <div class="section-title">Блок 3 · Поставки</div>
+    <div class="section-desc">► Тактика и решения</div>
+
+    <div class="q">
+      <span class="q-num">21</span>
+      <span class="q-text">Колонна в пути. Ты — старший. Внезапно видишь впереди перекрытие из 4 машин. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q21" value="0"> Ехать дальше</label>
+        <label class="option"><input type="radio" name="q21" value="1"> Доложить, оценить обстановку, действовать по ситуации</label>
+        <label class="option"><input type="radio" name="q21" value="0"> Развернуться</label>
+        <label class="option"><input type="radio" name="q21" value="0"> Бросить груз</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">22</span>
+      <span class="q-text">Началась перестрелка. Один из бойцов ранен. Твои приоритеты?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q22" value="0"> Продолжать бой</label>
+        <label class="option"><input type="radio" name="q22" value="1"> Обеспечить безопасность, вызвать МР, доложить</label>
+        <label class="option"><input type="radio" name="q22" value="0"> Отступить</label>
+        <label class="option"><input type="radio" name="q22" value="0"> Бросить раненого</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">23</span>
+      <span class="q-text">Перестрелка закончилась. Нападавшие убиты. Что делаешь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q23" value="0"> Уезжаю</label>
+        <label class="option"><input type="radio" name="q23" value="1"> Докладываю, фиксирую, оформляю рапорт</label>
+        <label class="option"><input type="radio" name="q23" value="0"> Забираю их оружие</label>
+        <label class="option"><input type="radio" name="q23" value="0"> Разбираюсь с грузом</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">24</span>
+      <span class="q-text">Тебе сообщили о готовящемся нападении. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q24" value="0"> Игнорировать</label>
+        <label class="option"><input type="radio" name="q24" value="1"> Усилить охрану, изменить маршрут, доложить</label>
+        <label class="option"><input type="radio" name="q24" value="0"> Отменить поставку</label>
+        <label class="option"><input type="radio" name="q24" value="0"> Поехать одному</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">25</span>
+      <span class="q-text">Ты не успеваешь доставить груз до 22:15. Что делаешь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q25" value="0"> Еду дальше</label>
+        <label class="option"><input type="radio" name="q25" value="1"> Прекращаю, докладываю, переношу</label>
+        <label class="option"><input type="radio" name="q25" value="0"> Бросаю груз</label>
+        <label class="option"><input type="radio" name="q25" value="0"> Скрываю</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">26</span>
+      <span class="q-text">У тебя закончились боеприпасы в бою. Что делаешь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q26" value="0"> Продолжаю бой</label>
+        <label class="option"><input type="radio" name="q26" value="1"> Докладываю, отхожу, использую спецсредства</label>
+        <label class="option"><input type="radio" name="q26" value="0"> Сдаюсь</label>
+        <label class="option"><input type="radio" name="q26" value="0"> Убегаю</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">27</span>
+      <span class="q-text">Ты видишь, что криминальная группа готовит перекрытие. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q27" value="0"> Ехать дальше</label>
+        <label class="option"><input type="radio" name="q27" value="1"> Доложить, остановить колонну, приготовиться к бою</label>
+        <label class="option"><input type="radio" name="q27" value="0"> Развернуться</label>
+        <label class="option"><input type="radio" name="q27" value="0"> Выйти и поговорить</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">28</span>
+      <span class="q-text">В ходе поставки один из бойцов отстал от колонны. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q28" value="0"> Ехать дальше</label>
+        <label class="option"><input type="radio" name="q28" value="1"> Остановиться, выяснить, доложить, действовать по обстановке</label>
+        <label class="option"><input type="radio" name="q28" value="0"> Бросить его</label>
+        <label class="option"><input type="radio" name="q28" value="0"> Развернуть всю колонну</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">29</span>
+      <span class="q-text">Тебя ранили в ногу во время перестрелки. Ты можешь двигаться. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q29" value="0"> Сдаться</label>
+        <label class="option"><input type="radio" name="q29" value="1"> Продолжать выполнение задачи, доложить, вызвать помощь</label>
+        <label class="option"><input type="radio" name="q29" value="0"> Убежать домой</label>
+        <label class="option"><input type="radio" name="q29" value="0"> Бросить оружие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">30</span>
+      <span class="q-text">Ты обнаружил, что груз повреждён (материалы испорчены). Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q30" value="0"> Скрыть</label>
+        <label class="option"><input type="radio" name="q30" value="1"> Доложить, зафиксировать, действовать по указанию</label>
+        <label class="option"><input type="radio" name="q30" value="0"> Выбросить</label>
+        <label class="option"><input type="radio" name="q30" value="0"> Продать</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 4. ЗАКОНЫ И ПРАВА (10) -->
+  <div class="section">
+    <div class="section-title">Блок 4 · Законы и права</div>
+    <div class="section-desc">► Реальные правовые ситуации</div>
+
+    <div class="q">
+      <span class="q-num">31</span>
+      <span class="q-text">Ты задержал гражданина. Он требует адвоката. Сколько времени ты ждёшь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q31" value="0"> Не жду</label>
+        <label class="option"><input type="radio" name="q31" value="1"> Ответ — 3 минуты, приезд — 7</label>
+        <label class="option"><input type="radio" name="q31" value="0"> 30 минут</label>
+        <label class="option"><input type="radio" name="q31" value="0"> 1 час</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">32</span>
+      <span class="q-text">Ты — ГРУ. Задержал депутата. Твои действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q32" value="0"> Задержать и держать</label>
+        <label class="option"><input type="radio" name="q32" value="1"> Освободить немедленно после установления личности</label>
+        <label class="option"><input type="radio" name="q32" value="0"> Обыскать</label>
+        <label class="option"><input type="radio" name="q32" value="0"> Применить силу</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">33</span>
+      <span class="q-text">Задержанный — сотрудник ФСБ. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q33" value="0"> Обычный порядок</label>
+        <label class="option"><input type="radio" name="q33" value="1"> Вызвать прокурора и руководство, ожидать до 10 минут</label>
+        <label class="option"><input type="radio" name="q33" value="0"> Отпустить сразу</label>
+        <label class="option"><input type="radio" name="q33" value="0"> Ускорить задержание</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">34</span>
+      <span class="q-text">Гражданский требует у тебя удостоверение, а ты не при исполнении. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q34" value="0"> Показать</label>
+        <label class="option"><input type="radio" name="q34" value="1"> Не обязан — не при исполнении</label>
+        <label class="option"><input type="radio" name="q34" value="0"> Представиться и показать</label>
+        <label class="option"><input type="radio" name="q34" value="0"> Уйти</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">35</span>
+      <span class="q-text">Прокурор требует от тебя прекратить задержание. Твои действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q35" value="0"> Проигнорировать</label>
+        <label class="option"><input type="radio" name="q35" value="1"> Выполнить требование прокурора</label>
+        <label class="option"><input type="radio" name="q35" value="0"> Доложить ГА</label>
+        <label class="option"><input type="radio" name="q35" value="0"> Применить силу</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">36</span>
+      <span class="q-text">Начальник отдал заведомо незаконный приказ. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q36" value="0"> Выполнить</label>
+        <label class="option"><input type="radio" name="q36" value="1"> Не выполнять, доложить вышестоящему</label>
+        <label class="option"><input type="radio" name="q36" value="0"> Уволиться</label>
+        <label class="option"><input type="radio" name="q36" value="0"> Промолчать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">37</span>
+      <span class="q-text">Ты задержал гражданина. Он отказывается называть имя. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q37" value="0"> Отпустить</label>
+        <label class="option"><input type="radio" name="q37" value="1"> Установить личность в отделе, задержать</label>
+        <label class="option"><input type="radio" name="q37" value="0"> Применить силу</label>
+        <label class="option"><input type="radio" name="q37" value="0"> Обыскать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">38</span>
+      <span class="q-text">Гражданский ведёт себя агрессивно, не угрожает жизни. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q38" value="0"> Применить оружие</label>
+        <label class="option"><input type="radio" name="q38" value="1"> Предупредить, применить спецсредства, задержать</label>
+        <label class="option"><input type="radio" name="q38" value="0"> Отойти</label>
+        <label class="option"><input type="radio" name="q38" value="0"> Убежать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">39</span>
+      <span class="q-text">Ты задержал адвоката. Он требует вызвать председателя палаты адвокатов. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q39" value="0"> Отказать</label>
+        <label class="option"><input type="radio" name="q39" value="1"> Вызвать, ожидать до 10 минут</label>
+        <label class="option"><input type="radio" name="q39" value="0"> Отпустить сразу</label>
+        <label class="option"><input type="radio" name="q39" value="0"> Применить силу</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">40</span>
+      <span class="q-text">Гражданский оскорбил тебя при исполнении. Твои действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q40" value="0"> Применить силу</label>
+        <label class="option"><input type="radio" name="q40" value="1"> Зафиксировать, составить протокол, доложить</label>
+        <label class="option"><input type="radio" name="q40" value="0"> Оскорбить в ответ</label>
+        <label class="option"><input type="radio" name="q40" value="0"> Ударить</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 5. ДИСЦИПЛИНА (10) -->
+  <div class="section">
+    <div class="section-title">Блок 5 · Дисциплина и субординация</div>
+    <div class="section-desc">► Внутренний порядок и ответственность</div>
+
+    <div class="q">
+      <span class="q-num">41</span>
+      <span class="q-text">Ты получил устный выговор. Что делаешь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q41" value="0"> Игнорирую</label>
+        <label class="option"><input type="radio" name="q41" value="1"> Отрабатываю в течение 48 часов</label>
+        <label class="option"><input type="radio" name="q41" value="0"> Спорю</label>
+        <label class="option"><input type="radio" name="q41" value="0"> Увольняюсь</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">42</span>
+      <span class="q-text">Ты на построении. Опоздал на 10 минут. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q42" value="0"> Тихо встать в строй</label>
+        <label class="option"><input type="radio" name="q42" value="1"> Доложить о прибытии, объяснить причину</label>
+        <label class="option"><input type="radio" name="q42" value="0"> Уйти</label>
+        <label class="option"><input type="radio" name="q42" value="0"> Скрыть</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">43</span>
+      <span class="q-text">Командир повысил голос на тебя при всех. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q43" value="0"> Ответить в том же тоне</label>
+        <label class="option"><input type="radio" name="q43" value="1"> Выслушать, после — обратиться по субординации</label>
+        <label class="option"><input type="radio" name="q43" value="0"> Уйти</label>
+        <label class="option"><input type="radio" name="q43" value="0"> Пожаловаться</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">44</span>
+      <span class="q-text">Ты не согласен с решением командира. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q44" value="0"> Спорить при всех</label>
+        <label class="option"><input type="radio" name="q44" value="1"> Обратиться по субординации, аргументировать</label>
+        <label class="option"><input type="radio" name="q44" value="0"> Уйти</label>
+        <label class="option"><input type="radio" name="q44" value="0"> Игнорировать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">45</span>
+      <span class="q-text">Твой подчинённый не выполнил приказ. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q45" value="0"> Ударить</label>
+        <label class="option"><input type="radio" name="q45" value="1"> Зафиксировать, доложить командиру, подготовить материалы</label>
+        <label class="option"><input type="radio" name="q45" value="0"> Игнорировать</label>
+        <label class="option"><input type="radio" name="q45" value="0"> Уволить самому</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">46</span>
+      <span class="q-text">Ты видишь, как военнослужащий спит на посту. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q46" value="0"> Промолчать</label>
+        <label class="option"><input type="radio" name="q46" value="1"> Зафиксировать, доложить, вызвать ВП/старшего</label>
+        <label class="option"><input type="radio" name="q46" value="0"> Разбудить и отпустить</label>
+        <label class="option"><input type="radio" name="q46" value="0"> Наказать самому</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">47</span>
+      <span class="q-text">Тебе приказали сделать то, что противоречит твоим убеждениям, но не закону. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q47" value="0"> Отказаться</label>
+        <label class="option"><input type="radio" name="q47" value="1"> Выполнить, доложить о несогласии по субординации</label>
+        <label class="option"><input type="radio" name="q47" value="0"> Спорить</label>
+        <label class="option"><input type="radio" name="q47" value="0"> Уволиться</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">48</span>
+      <span class="q-text">Товарищ просит покрыть его нарушение. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q48" value="0"> Согласиться</label>
+        <label class="option"><input type="radio" name="q48" value="1"> Отказать, доложить командиру</label>
+        <label class="option"><input type="radio" name="q48" value="0"> Промолчать</label>
+        <label class="option"><input type="radio" name="q48" value="0"> Помочь скрыть</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">49</span>
+      <span class="q-text">Ты — старший наряда. Один из постовых не выходит на связь. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q49" value="0"> Игнорировать</label>
+        <label class="option"><input type="radio" name="q49" value="1"> Доложить, проверить пост, действовать по обстановке</label>
+        <label class="option"><input type="radio" name="q49" value="0"> Уйти домой</label>
+        <label class="option"><input type="radio" name="q49" value="0"> Снять с поста</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">50</span>
+      <span class="q-text">Ты узнал, что твой друг-сослуживец готовит преступление. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q50" value="0"> Промолчать</label>
+        <label class="option"><input type="radio" name="q50" value="1"> Доложить командованию/ОСБ</label>
+        <label class="option"><input type="radio" name="q50" value="0"> Помочь</label>
+        <label class="option"><input type="radio" name="q50" value="0"> Уговорить</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 6. ПСИХОЛОГИЯ И ЛОГИКА (10) -->
+  <div class="section">
+    <div class="section-title">Блок 6 · Психология и логика</div>
+    <div class="section-desc">► Проверка зрелости и мышления</div>
+
+    <div class="q">
+      <span class="q-num">51</span>
+      <span class="q-text">Ты проиграл перестрелку. Что чувствуешь и что делаешь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q51" value="0"> Все читеры, виноват командир</label>
+        <label class="option"><input type="radio" name="q51" value="1"> Проанализирую ошибки, доложу, буду работать над собой</label>
+        <label class="option"><input type="radio" name="q51" value="0"> Удалю игру</label>
+        <label class="option"><input type="radio" name="q51" value="0"> Буду мстить</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">52</span>
+      <span class="q-text">Тебя оскорбили в голосовом чате. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q52" value="0"> Пошлю в ответ</label>
+        <label class="option"><input type="radio" name="q52" value="1"> Зафиксирую, доложу, не отвечу агрессией</label>
+        <label class="option"><input type="radio" name="q52" value="0"> Ударю</label>
+        <label class="option"><input type="radio" name="q52" value="0"> Пожалуюсь друзьям</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">53</span>
+      <span class="q-text">Зачем тебе повышение?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q53" value="0"> Друзья сказали</label>
+        <label class="option"><input type="radio" name="q53" value="1"> Развитие, ответственность, польза подразделению</label>
+        <label class="option"><input type="radio" name="q53" value="0"> Хочу больше возможностей</label>
+        <label class="option"><input type="radio" name="q53" value="0"> Хочу власть</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">54</span>
+      <span class="q-text">Сколько времени ты готов уделять службе?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q54" value="0"> Когда захочу</label>
+        <label class="option"><input type="radio" name="q54" value="1"> Конкретно: 3–4 часа в день, по будням вечером</label>
+        <label class="option"><input type="radio" name="q54" value="0"> Когда друзья позовут</label>
+        <label class="option"><input type="radio" name="q54" value="0"> Не готов</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">55</span>
+      <span class="q-text">Опиши свою последнюю поставку. Что было сложного?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q55" value="0"> Ответа нет / «ну, норм»</label>
+        <label class="option"><input type="radio" name="q55" value="1"> Связный рассказ с выводами</label>
+        <label class="option"><input type="radio" name="q55" value="0"> Краткий ответ без деталей</label>
+        <label class="option"><input type="radio" name="q55" value="0"> Не участвовал</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">56</span>
+      <span class="q-text">Почему важно носить бодикамеру?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q56" value="0"> «Надо и всё»</label>
+        <label class="option"><input type="radio" name="q56" value="1"> Фиксация, защита, доказательства</label>
+        <label class="option"><input type="radio" name="q56" value="0"> Частичное понимание</label>
+        <label class="option"><input type="radio" name="q56" value="0"> Не знаю</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">57</span>
+      <span class="q-text">Ты не согласен с решением командира публично. Как поступишь?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q57" value="0"> Буду спорить при всех</label>
+        <label class="option"><input type="radio" name="q57" value="1"> Обращусь по субординации, аргументирую</label>
+        <label class="option"><input type="radio" name="q57" value="0"> Уйду</label>
+        <label class="option"><input type="radio" name="q57" value="0"> Промолчу</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">58</span>
+      <span class="q-text">Тебя повысили, товарища — нет. Он злится. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q58" value="0"> Это его проблемы</label>
+        <label class="option"><input type="radio" name="q58" value="1"> Поддержу, объясню, не буду хвастаться</label>
+        <label class="option"><input type="radio" name="q58" value="0"> Скажу, что он слабак</label>
+        <label class="option"><input type="radio" name="q58" value="0"> Промолчу</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">59</span>
+      <span class="q-text">Ты видишь, как гражданский нарушает ПДД. Ты не на службе. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q59" value="0"> Задержать самому</label>
+        <label class="option"><input type="radio" name="q59" value="1"> Вызвать ГИБДД/МВД, сообщить</label>
+        <label class="option"><input type="radio" name="q59" value="0"> Проигнорировать</label>
+        <label class="option"><input type="radio" name="q59" value="0"> Применить оружие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">60</span>
+      <span class="q-text">Ты узнал, что твой командир нарушает закон. Действия?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q60" value="0"> Промолчать</label>
+        <label class="option"><input type="radio" name="q60" value="1"> Доложить в ОСБ/вышестоящему командованию</label>
+        <label class="option"><input type="radio" name="q60" value="0"> Обсудить с другими</label>
+        <label class="option"><input type="radio" name="q60" value="0"> Помочь скрыть</label>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="calculateResult()">► ПОДСЧИТАТЬ РЕЗУЛЬТАТ</button>
+</form>
+
+<div id="result"></div>
+
+<div class="footer">
+  <span class="footer-star">★</span>
+  ГРУ · ВДВ · СИЛА В ТЕНИ
+  <span class="footer-star">★</span>
+</div>
+
+<script>
+function calculateResult(){
+  const form = document.getElementById('quizForm');
+  const result = document.getElementById('result');
+
+  const blocks = {
+    'Блок 1 · Оружие и сила': [1,2,3,4,5,6,7,8,9,10],
+    'Блок 2 · Постовая служба': [11,12,13,14,15,16,17,18,19,20],
+    'Блок 3 · Поставки': [21,22,23,24,25,26,27,28,29,30],
+    'Блок 4 · Законы и права': [31,32,33,34,35,36,37,38,39,40],
+    'Блок 5 · Дисциплина': [41,42,43,44,45,46,47,48,49,50],
+    'Блок 6 · Психология и логика': [51,52,53,54,55,56,57,58,59,60]
+  };
+
+  let total = 0, max = 0;
+  let blockResults = [];
+
+  for(const [name, nums] of Object.entries(blocks)){
+    let score = 0;
+    nums.forEach(n => {
+      const val = form.querySelector(`input[name="q${n}"]:checked`);
+      if(val) score += parseInt(val.value);
+    });
+    total += score;
+    max += nums.length;
+    blockResults.push({name, score, max: nums.length});
+  }
+
+  let status, statusClass, decision;
+  const percent = (total / max) * 100;
+
+  if(percent >= 90){
+    status = "★ ОТЛИЧНО ★";
+    statusClass = "pass";
+    decision = "Боец полностью готов. Допуск без ограничений.";
+  } else if(percent >= 75){
+    status = "✓ ХОРОШО";
+    statusClass = "pass";
+    decision = "Боец знает материал. Незначительные пробелы.";
+  } else if(percent >= 60){
+    status = "⚠ УДОВЛЕТВОРИТЕЛЬНО";
+    statusClass = "warn";
+    decision = "Требуется доработка. Повторная проверка через 3 дня.";
+  } else {
+    status = "✗ НЕУДОВЛЕТВОРИТЕЛЬНО";
+    statusClass = "fail";
+    decision = "Боец не готов. Повторный тест — не ранее чем через 3 дня.";
+  }
+
+  result.className = "show result-" + (statusClass === "pass" ? "pass" : statusClass === "warn" ? "warn" : "fail");
+  let rows = blockResults.map(b =>
+    `<tr><td>${b.name}</td><td>${b.score}</td><td>${b.max}</td></tr>`
+  ).join('');
+
+  result.innerHTML = `
+    <div class="result-title ${statusClass}">${status}</div>
+    <p style="text-align:center; color:var(--vdv);">${decision}</p>
+    <table class="score-table">
+      <tr><th>Блок</th><th>Баллы</th><th>Макс.</th></tr>
+      ${rows}
+      <tr><td><strong>ИТОГО</strong></td><td><strong>${total}</strong></td><td><strong>${max}</strong></td></tr>
+      <tr><td><strong>ПРОЦЕНТ</strong></td><td colspan="2"><strong>${percent.toFixed(1)}%</strong></td></tr>
+    </table>
+    <p style="margin-top:20px; color:var(--muted); font-size:0.8em; text-align:center; letter-spacing:2px;">
+      ДАТА: ${new Date().toLocaleString('ru-RU')}
+    </p>
+  `;
+
+  result.scrollIntoView({behavior:'smooth'});
+}
+</script>
+
+</body>
+                                                                                 </html>
