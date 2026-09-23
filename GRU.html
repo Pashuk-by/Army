@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ГРУ · ЭКЗАМЕН НА СТАРШЕГО ИНСТРУКТОРА</title>
+<style>
+  :root{
+    --bg:#0a0f14; --card:#111820; --card2:#182230; --border:#243244;
+    --gru:#00a8e8; --vdv:#4fc3f7; --green:#4caf50; --red:#e53935;
+    --yellow:#ffb300; --text:#d0d8e0; --muted:#7a8899; --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,rgba(0,168,232,0.05) 0%,transparent 300px),
+    repeating-linear-gradient(45deg,#0a0f14,#0a0f14 10px,#0c1219 10px,#0c1219 20px);
+    color:var(--text); font-family:'Courier New',monospace;
+    line-height:1.6; padding:20px; max-width:1100px; margin:0 auto;
+  }
+  header{
+    text-align:center; padding:35px 20px;
+    background:linear-gradient(135deg,#111820,#182230);
+    border:2px solid var(--gru); border-radius:4px; margin-bottom:25px;
+    position:relative;
+  }
+  header::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg,var(--gru),var(--vdv),var(--gru));
+  }
+  header h1{
+    color:var(--white); font-size:2em; letter-spacing:4px;
+    text-transform:uppercase; text-shadow:0 0 20px rgba(0,168,232,0.6);
+    margin-bottom:10px;
+  }
+  header h1 span{color:var(--gru);}
+  header p{color:var(--vdv); font-size:0.9em; letter-spacing:2px; text-transform:uppercase;}
+  .badge{
+    display:inline-block; background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; padding:6px 18px; border-radius:2px;
+    font-size:0.75em; font-weight:700; margin-top:10px;
+    letter-spacing:2px; text-transform:uppercase;
+  }
+  .section{
+    background:var(--card); border:1px solid var(--border);
+    border-left:4px solid var(--gru); border-radius:4px;
+    padding:20px; margin-bottom:20px;
+  }
+  .section-title{
+    color:var(--vdv); font-size:1.1em; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:5px; display:flex; align-items:center; gap:10px;
+  }
+  .section-title::before{content:"◤"; color:var(--gru);}
+  .section-desc{color:var(--muted); font-size:0.8em; letter-spacing:1px; margin-bottom:15px; padding-left:20px;}
+  .q{
+    background:var(--card2); border:1px solid var(--border);
+    border-radius:3px; padding:15px; margin-bottom:12px;
+  }
+  .q:hover{border-color:var(--gru);}
+  .q-num{
+    display:inline-block; background:var(--gru); color:#000;
+    width:28px; height:28px; line-height:28px; text-align:center;
+    font-weight:700; font-size:0.85em; margin-right:10px;
+  }
+  .q-text{color:var(--white); font-weight:700; margin-bottom:12px; display:inline;}
+  .options{display:flex; flex-direction:column; gap:6px; margin-top:10px;}
+  .option{
+    background:#0d141c; border:1px solid var(--border);
+    border-radius:3px; padding:10px 14px; cursor:pointer;
+    transition:all 0.2s; font-size:0.9em; display:flex; align-items:center;
+  }
+  .option:hover{border-color:var(--vdv); background:#141d28; padding-left:18px;}
+  .option input{margin-right:10px; accent-color:var(--gru);}
+  button{
+    background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; border:none; padding:16px 30px; border-radius:3px;
+    font-size:1.1em; font-weight:700; cursor:pointer; width:100%;
+    transition:all 0.2s; margin-top:10px; letter-spacing:3px;
+    text-transform:uppercase; font-family:'Courier New',monospace;
+  }
+  button:hover{box-shadow:0 0 25px rgba(0,168,232,0.6); transform:translateY(-2px);}
+  #result{
+    display:none; margin-top:20px; padding:25px;
+    border-radius:4px; border:2px solid var(--border);
+    background:var(--card2);
+  }
+  #result.show{display:block; animation:fadeIn 0.5s;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  .result-pass{border-color:var(--green); box-shadow:0 0 30px rgba(76,175,80,0.3);}
+  .result-warn{border-color:var(--yellow); box-shadow:0 0 30px rgba(255,179,0,0.3);}
+  .result-fail{border-color:var(--red); box-shadow:0 0 30px rgba(229,57,53,0.3);}
+  .result-title{font-size:1.5em; font-weight:700; margin-bottom:15px; letter-spacing:3px; text-transform:uppercase; text-align:center;}
+  .pass{color:var(--green);}
+  .warn{color:var(--yellow);}
+  .fail{color:var(--red);}
+  .score-table{width:100%; border-collapse:collapse; margin-top:15px;}
+  .score-table th,.score-table td{border:1px solid var(--border); padding:10px; text-align:left; font-size:0.9em;}
+  .score-table th{background:#0d141c; color:var(--vdv); text-transform:uppercase; letter-spacing:1px; font-size:0.8em;}
+  .footer{
+    text-align:center; color:var(--muted); font-size:0.75em;
+    margin-top:40px; padding-top:20px;
+    border-top:1px solid var(--border); letter-spacing:3px; text-transform:uppercase;
+  }
+  .footer-star{color:var(--gru); margin:0 10px;}
+  .motto{text-align:center; color:var(--vdv); font-style:italic; font-size:0.9em; margin:20px 0; letter-spacing:1px; opacity:0.8;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ГРУ <span>·</span> ЭКЗАМЕН</h1>
+  <p>На должность Старшего Инструктора · Майор</p>
+  <div class="badge">ДОПУСК ТОЛЬКО ПО ЗНАНИЮ ЗАКОНОВ</div>
+</header>
+
+<div class="motto">«Незнание закона не освобождает от ответственности.»</div>
+
+<form id="quizForm">
+
+  <!-- БЛОК 1. УК РО -->
+  <div class="section">
+    <div class="section-title">Блок 1 · Уголовный кодекс РО</div>
+    <div class="section-desc">► Квалификация, сроки, составы (15 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">01</span>
+      <span class="q-text">Какая категория тяжести у преступления, за которое предусмотрено до 30 месяцев лишения свободы (умышленное)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" value="0"> Небольшой тяжести</label>
+        <label class="option"><input type="radio" name="q1" value="1"> Средней тяжести</label>
+        <label class="option"><input type="radio" name="q1" value="0"> Тяжкое</label>
+        <label class="option"><input type="radio" name="q1" value="0"> Особо тяжкое</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">02</span>
+      <span class="q-text">Срок лишения свободы по ст. 51 УК РО (убийство)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="0"> 30 месяцев</label>
+        <label class="option"><input type="radio" name="q2" value="1"> 50 месяцев</label>
+        <label class="option"><input type="radio" name="q2" value="0"> 40 месяцев</label>
+        <label class="option"><input type="radio" name="q2" value="0"> 20 месяцев</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">03</span>
+      <span class="q-text">Что такое необходимая оборона (ст. 26 УК РО)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q3" value="0"> Любое причинение вреда нападающему</label>
+        <label class="option"><input type="radio" name="q3" value="1"> Причинение вреда при защите от опасного для жизни посягательства без превышения</label>
+        <label class="option"><input type="radio" name="q3" value="0"> Ответная агрессия</label>
+        <label class="option"><input type="radio" name="q3" value="0"> Самозащита с оружием</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">04</span>
+      <span class="q-text">Что такое крайняя необходимость (ст. 28 УК РО)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q4" value="0"> То же, что необходимая оборона</label>
+        <label class="option"><input type="radio" name="q4" value="1"> Причинение вреда для устранения опасности, если её нельзя устранить иначе</label>
+        <label class="option"><input type="radio" name="q4" value="0"> Причинение вреда при задержании</label>
+        <label class="option"><input type="radio" name="q4" value="0"> Исполнение приказа</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">05</span>
+      <span class="q-text">Срок по ст. 109 УК РО (самовольное оставление части)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q5" value="0"> 20 месяцев</label>
+        <label class="option"><input type="radio" name="q5" value="1"> 30 месяцев с лишением звания</label>
+        <label class="option"><input type="radio" name="q5" value="0"> 40 месяцев</label>
+        <label class="option"><input type="radio" name="q5" value="0"> 50 месяцев</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">06</span>
+      <span class="q-text">Срок по ст. 73.1 УК РО (проникновение на режимный объект)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q6" value="0"> 30 месяцев</label>
+        <label class="option"><input type="radio" name="q6" value="1"> 40 месяцев или штраф 80–150 тыс. ₽</label>
+        <label class="option"><input type="radio" name="q6" value="0"> 50 месяцев</label>
+        <label class="option"><input type="radio" name="q6" value="0"> 20 месяцев</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">07</span>
+      <span class="q-text">Срок по ст. 100.1 УК РО (уклонение от наказания)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q7" value="0"> Фиксированный — 10 месяцев</label>
+        <label class="option"><input type="radio" name="q7" value="1"> 1 приоритет розыска = 10 месяцев</label>
+        <label class="option"><input type="radio" name="q7" value="0"> 50 месяцев</label>
+        <label class="option"><input type="radio" name="q7" value="0"> 30 месяцев</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">08</span>
+      <span class="q-text">Срок по ст. 74 ч.1 УК РО (незаконное ношение оружия)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q8" value="0"> 30 месяцев</label>
+        <label class="option"><input type="radio" name="q8" value="1"> 40 месяцев или штраф 50 тыс. ₽</label>
+        <label class="option"><input type="radio" name="q8" value="0"> 50 месяцев</label>
+        <label class="option"><input type="radio" name="q8" value="0"> 20 месяцев</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">09</span>
+      <span class="q-text">Срок по ст. 105 УК РО (неповиновение должностному лицу)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q9" value="0"> 20 месяцев</label>
+        <label class="option"><input type="radio" name="q9" value="1"> 30 месяцев или штраф до 40 тыс. ₽</label>
+        <label class="option"><input type="radio" name="q9" value="0"> 40 месяцев</label>
+        <label class="option"><input type="radio" name="q9" value="0"> 50 месяцев</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">10</span>
+      <span class="q-text">Что такое совокупность преступлений (ст. 12 УК РО)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q10" value="0"> Повторное совершение</label>
+        <label class="option"><input type="radio" name="q10" value="1"> Два и более преступления, ни за одно из которых лицо не осуждено</label>
+        <label class="option"><input type="radio" name="q10" value="0"> Рецидив</label>
+        <label class="option"><input type="radio" name="q10" value="0"> Соучастие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">11</span>
+      <span class="q-text">Срок погашения судимости после тяжкого преступления?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q11" value="0"> 15 лет</label>
+        <label class="option"><input type="radio" name="q11" value="1"> 25 лет</label>
+        <label class="option"><input type="radio" name="q11" value="0"> 35 лет</label>
+        <label class="option"><input type="radio" name="q11" value="0"> 20 лет</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">12</span>
+      <span class="q-text">Размер залога за преступление небольшой тяжести (ст. 50.1 УК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q12" value="0"> 25 000 ₽</label>
+        <label class="option"><input type="radio" name="q12" value="1"> 50 000 ₽</label>
+        <label class="option"><input type="radio" name="q12" value="0"> 75 000 ₽</label>
+        <label class="option"><input type="radio" name="q12" value="0"> 100 000 ₽</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">13</span>
+      <span class="q-text">Что является основанием для освобождения от уголовной ответственности (ст. 17 УК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q13" value="0"> Признание вины</label>
+        <label class="option"><input type="radio" name="q13" value="1"> Отсутствие события или состава преступления</label>
+        <label class="option"><input type="radio" name="q13" value="0"> Раскаяние</label>
+        <label class="option"><input type="radio" name="q13" value="0"> Возмещение ущерба</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">14</span>
+      <span class="q-text">Срок давности для особо тяжкого преступления (ст. 47 УК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q14" value="0"> 15 лет</label>
+        <label class="option"><input type="radio" name="q14" value="1"> 35 лет</label>
+        <label class="option"><input type="radio" name="q14" value="0"> 25 лет</label>
+        <label class="option"><input type="radio" name="q14" value="0"> 20 лет</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">15</span>
+      <span class="q-text">Кто вправе признать лицо виновным и назначить штраф или лишение свободы?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q15" value="0"> Только суд</label>
+        <label class="option"><input type="radio" name="q15" value="1"> МВД, ФСБ, ВП, прокуратура, СК, суд — в пределах полномочий</label>
+        <label class="option"><input type="radio" name="q15" value="0"> Только прокуратура</label>
+        <label class="option"><input type="radio" name="q15" value="0"> Только ГА</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 2. УПК РО -->
+  <div class="section">
+    <div class="section-title">Блок 2 · Уголовно-процессуальный кодекс РО</div>
+    <div class="section-desc">► Задержание, обыск, допрос, права (15 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">16</span>
+      <span class="q-text">Основания задержания по ст. 51 УПК РО (выберите неверное)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q16" value="0"> Застигнут при совершении преступления</label>
+        <label class="option"><input type="radio" name="q16" value="1"> Личная неприязнь сотрудника</label>
+        <label class="option"><input type="radio" name="q16" value="0"> Находится в ориентировке</label>
+        <label class="option"><input type="radio" name="q16" value="0"> Очевидцы указали на лицо</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">17</span>
+      <span class="q-text">Порядок задержания по ст. 52 УПК РО — что идёт первым?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q17" value="0"> Представиться</label>
+        <label class="option"><input type="radio" name="q17" value="1"> Применить спецсредства для ограничения свободы</label>
+        <label class="option"><input type="radio" name="q17" value="0"> Обыск</label>
+        <label class="option"><input type="radio" name="q17" value="0"> Миранда</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">18</span>
+      <span class="q-text">Срок задержания по ст. 53 УПК РО (общий)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q18" value="0"> 30 минут</label>
+        <label class="option"><input type="radio" name="q18" value="1"> 60 минут</label>
+        <label class="option"><input type="radio" name="q18" value="0"> 90 минут</label>
+        <label class="option"><input type="radio" name="q18" value="0"> 120 минут</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">19</span>
+      <span class="q-text">Срок задержания для госслужащего по ст. 53 УПК РО?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q19" value="0"> 60 минут</label>
+        <label class="option"><input type="radio" name="q19" value="1"> 90 минут</label>
+        <label class="option"><input type="radio" name="q19" value="0"> 120 минут</label>
+        <label class="option"><input type="radio" name="q19" value="0"> Без ограничений</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">20</span>
+      <span class="q-text">Сколько времени даётся на ответ адвоката при задержании?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q20" value="0"> 1 минута</label>
+        <label class="option"><input type="radio" name="q20" value="1"> 3 минуты, приезд — 7</label>
+        <label class="option"><input type="radio" name="q20" value="0"> 5 минут</label>
+        <label class="option"><input type="radio" name="q20" value="0"> 10 минут</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">21</span>
+      <span class="q-text">Сколько времени даётся задержанному на телефонный звонок?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q21" value="0"> 1 минута</label>
+        <label class="option"><input type="radio" name="q21" value="1"> 2 минуты</label>
+        <label class="option"><input type="radio" name="q21" value="0"> 3 минуты</label>
+        <label class="option"><input type="radio" name="q21" value="0"> 5 минут</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">22</span>
+      <span class="q-text">Что относится к недопустимым доказательствам (ст. 44 УПК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q22" value="0"> Показания свидетеля</label>
+        <label class="option"><input type="radio" name="q22" value="1"> Показания без защитника, не подтверждённые в суде; догадки, слухи</label>
+        <label class="option"><input type="radio" name="q22" value="0"> Вещественные доказательства</label>
+        <label class="option"><input type="radio" name="q22" value="0"> Протоколы следствия</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">23</span>
+      <span class="q-text">Когда допускается личный обыск (ст. 93 УПК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q23" value="0"> Всегда</label>
+        <label class="option"><input type="radio" name="q23" value="1"> По судебному решению или при задержании</label>
+        <label class="option"><input type="radio" name="q23" value="0"> Только с согласия</label>
+        <label class="option"><input type="radio" name="q23" value="0"> Никогда</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">24</span>
+      <span class="q-text">Срок допроса без перерыва (ст. 96 УПК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q24" value="0"> 30 минут</label>
+        <label class="option"><input type="radio" name="q24" value="1"> 1 час</label>
+        <label class="option"><input type="radio" name="q24" value="0"> 2 часа</label>
+        <label class="option"><input type="radio" name="q24" value="0"> Без ограничений</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">25</span>
+      <span class="q-text">Кто вправе требовать судебный контроль при расследовании без письменной отчётности (ст. 83.1 УПК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q25" value="0"> Только прокурор</label>
+        <label class="option"><input type="radio" name="q25" value="1"> Подозреваемый, обвиняемый</label>
+        <label class="option"><input type="radio" name="q25" value="0"> Только адвокат</label>
+        <label class="option"><input type="radio" name="q25" value="0"> Только судья</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">26</span>
+      <span class="q-text">Кто относится к неприкосновенным лицам (ст. 102 УПК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q26" value="0"> Только премьер</label>
+        <label class="option"><input type="radio" name="q26" value="1"> Сенатор, судья, министр, премьер, генпрокурор</label>
+        <label class="option"><input type="radio" name="q26" value="0"> Только депутаты</label>
+        <label class="option"><input type="radio" name="q26" value="0"> Все госслужащие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">27</span>
+      <span class="q-text">Срок рассмотрения ходатайства (ст. 62 УПК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q27" value="0"> Немедленно</label>
+        <label class="option"><input type="radio" name="q27" value="1"> Не позднее суток</label>
+        <label class="option"><input type="radio" name="q27" value="0"> 3 дня</label>
+        <label class="option"><input type="radio" name="q27" value="0"> 5 дней</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">28</span>
+      <span class="q-text">Что проверяется при сдаче поста (ст. 26 УКПС)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q28" value="0"> Только оружие</label>
+        <label class="option"><input type="radio" name="q28" value="1"> Оружие, связь, состояние объекта, происшествия</label>
+        <label class="option"><input type="radio" name="q28" value="0"> Только связь</label>
+        <label class="option"><input type="radio" name="q28" value="0"> Ничего</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">29</span>
+      <span class="q-text">Срок хранения доказательств при задержании (ст. 16 УПК)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q29" value="0"> 24 часа</label>
+        <label class="option"><input type="radio" name="q29" value="1"> 48 часов</label>
+        <label class="option"><input type="radio" name="q29" value="0"> 72 часа</label>
+        <label class="option"><input type="radio" name="q29" value="0"> 96 часов</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">30</span>
+      <span class="q-text">Кто вправе задержать лицо по подозрению в преступлении?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q30" value="0"> Только полиция</label>
+        <label class="option"><input type="radio" name="q30" value="1"> Дознаватель, следователь; ВП — в пределах полномочий</label>
+        <label class="option"><input type="radio" name="q30" value="0"> Любой военнослужащий</label>
+        <label class="option"><input type="radio" name="q30" value="0"> Только суд</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 3. КоАП РО -->
+  <div class="section">
+    <div class="section-title">Блок 3 · Кодекс об административных правонарушениях</div>
+    <div class="section-desc">► Протокол, задержание, штрафы (10 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">31</span>
+      <span class="q-text">Максимальный административный арест (ст. 3.6 КоАП)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q31" value="0"> 15 суток</label>
+        <label class="option"><input type="radio" name="q31" value="1"> 24 суток</label>
+        <label class="option"><input type="radio" name="q31" value="0"> 30 суток</label>
+        <label class="option"><input type="radio" name="q31" value="0"> 10 суток</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">32</span>
+      <span class="q-text">Срок административного задержания (ст. 16.2)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q32" value="0"> 30 минут</label>
+        <label class="option"><input type="radio" name="q32" value="1"> 60 минут; 90 — для госслужащих</label>
+        <label class="option"><input type="radio" name="q32" value="0"> 3 часа</label>
+        <label class="option"><input type="radio" name="q32" value="0"> 24 часа</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">33</span>
+      <span class="q-text">Штраф за мелкое хулиганство (ст. 11.1 КоАП)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q33" value="0"> 1 000–5 000 ₽</label>
+        <label class="option"><input type="radio" name="q33" value="1"> 5 000–20 000 ₽ или арест до 15 суток</label>
+        <label class="option"><input type="radio" name="q33" value="0"> 30 000 ₽</label>
+        <label class="option"><input type="radio" name="q33" value="0"> 50 000 ₽</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">34</span>
+      <span class="q-text">Что грозит за отказ от уплаты штрафа (ст. 10.2)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q34" value="0"> Ничего</label>
+        <label class="option"><input type="radio" name="q34" value="1"> Двойной штраф (мин. 3 000 ₽) или арест до 20 суток</label>
+        <label class="option"><input type="radio" name="q34" value="0"> Увольнение</label>
+        <label class="option"><input type="radio" name="q34" value="0"> Предупреждение</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">35</span>
+      <span class="q-text">Особый порядок задержания госслужащего (ст. 16.2.2)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q35" value="0"> Обычный</label>
+        <label class="option"><input type="radio" name="q35" value="1"> Вызов прокурора и руководства, ожидание до 10 минут</label>
+        <label class="option"><input type="radio" name="q35" value="0"> Ускоренный</label>
+        <label class="option"><input type="radio" name="q35" value="0"> Без протокола</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">36</span>
+      <span class="q-text">Штраф за неповиновение об остановке ТС (ст. 8.15)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q36" value="0"> 5 000 ₽</label>
+        <label class="option"><input type="radio" name="q36" value="1"> 10 000–30 000 ₽ или арест до 20 суток</label>
+        <label class="option"><input type="radio" name="q36" value="0"> 50 000 ₽</label>
+        <label class="option"><input type="radio" name="q36" value="0"> 1 000 ₽</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">37</span>
+      <span class="q-text">Наказание за оскорбление представителя власти (ст. 10.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q37" value="0"> Штраф 1 000 ₽</label>
+        <label class="option"><input type="radio" name="q37" value="1"> Штраф 10 000–25 000 ₽ или арест 15 суток</label>
+        <label class="option"><input type="radio" name="q37" value="0"> 50 000 ₽</label>
+        <label class="option"><input type="radio" name="q37" value="0"> Предупреждение</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">38</span>
+      <span class="q-text">Что делать при отказе гражданина от осмотра в оцеплении (ст. 16 ФЗ «О полиции»)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q38" value="0"> Пропустить</label>
+        <label class="option"><input type="radio" name="q38" value="1"> Не допускать проход/выход до снятия оцепления</label>
+        <label class="option"><input type="radio" name="q38" value="0"> Задержать на 24 часа</label>
+        <label class="option"><input type="radio" name="q38" value="0"> Применить оружие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">39</span>
+      <span class="q-text">Сколько времени даётся на реализацию прав задержанного (ст. 16.2.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q39" value="0"> 1 минута</label>
+        <label class="option"><input type="radio" name="q39" value="1"> Адвокат 3/7, звонок 2</label>
+        <label class="option"><input type="radio" name="q39" value="0"> 5 минут</label>
+        <label class="option"><input type="radio" name="q39" value="0"> 10 минут</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">40</span>
+      <span class="q-text">Кто уполномочен составлять протоколы по КоАП?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q40" value="0"> Только МВД</label>
+        <label class="option"><input type="radio" name="q40" value="1"> МВД, ФСБ, ВП, прокуратура, иные уполномоченные органы</label>
+        <label class="option"><input type="radio" name="q40" value="0"> Только суд</label>
+        <label class="option"><input type="radio" name="q40" value="0"> Только ГА</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 4. ФЗ «О полиции» -->
+  <div class="section">
+    <div class="section-title">Блок 4 · ФЗ «О полиции»</div>
+    <div class="section-desc">► Полномочия МВД и взаимодействие (8 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">41</span>
+      <span class="q-text">Срок задержания полицией (ст. 14)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q41" value="0"> 30 минут</label>
+        <label class="option"><input type="radio" name="q41" value="1"> Не более 1 часа</label>
+        <label class="option"><input type="radio" name="q41" value="0"> 2 часа</label>
+        <label class="option"><input type="radio" name="q41" value="0"> 3 часа</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">42</span>
+      <span class="q-text">Право задержанного на телефонный звонок (ст. 14)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q42" value="0"> Не предоставляется</label>
+        <label class="option"><input type="radio" name="q42" value="1"> 1 звонок не позднее 1 часа</label>
+        <label class="option"><input type="radio" name="q42" value="0"> 2 звонка</label>
+        <label class="option"><input type="radio" name="q42" value="0"> 3 звонка</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">43</span>
+      <span class="q-text">Когда полиция вправе проникнуть в жилище (ст. 15)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q43" value="0"> Всегда</label>
+        <label class="option"><input type="radio" name="q43" value="1"> Спасение жизни, задержание, пресечение преступления</label>
+        <label class="option"><input type="radio" name="q43" value="0"> Только по решению суда</label>
+        <label class="option"><input type="radio" name="q43" value="0"> Никогда</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">44</span>
+      <span class="q-text">Что обязана сделать полиция перед применением силы (ст. 18)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q44" value="0"> Ничего</label>
+        <label class="option"><input type="radio" name="q44" value="1"> Представиться, предупредить, дать время</label>
+        <label class="option"><input type="radio" name="q44" value="0"> Сразу применить</label>
+        <label class="option"><input type="radio" name="q44" value="0"> Вызвать ФСБ</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">45</span>
+      <span class="q-text">Когда полиция применяет оружие без предупреждения (ст. 21)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q45" value="0"> Всегда</label>
+        <label class="option"><input type="radio" name="q45" value="1"> При отражении нападения с оружием</label>
+        <label class="option"><input type="radio" name="q45" value="0"> Никогда</label>
+        <label class="option"><input type="radio" name="q45" value="0"> При отказе остановиться</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">46</span>
+      <span class="q-text">Что относится к спецсредствам полиции (ст. 20)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q46" value="0"> Только дубинка</label>
+        <label class="option"><input type="radio" name="q46" value="1"> Палки, газ, наручники, электрошок, светошок, водомёты, бронемашины</label>
+        <label class="option"><input type="radio" name="q46" value="0"> Только наручники</label>
+        <label class="option"><input type="radio" name="q46" value="0"> Только оружие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">47</span>
+      <span class="q-text">Что вправе делать полиция при оцеплении (ст. 16)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q47" value="0"> Только наблюдать</label>
+        <label class="option"><input type="radio" name="q47" value="1"> Личный осмотр, осмотр ТС, грузов; не допускать проход/выход при отказе</label>
+        <label class="option"><input type="radio" name="q47" value="0"> Задерживать всех</label>
+        <label class="option"><input type="radio" name="q47" value="0"> Применять оружие</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">48</span>
+      <span class="q-text">Когда полиция вправе вскрыть транспортное средство (ст. 15.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q48" value="0"> Всегда</label>
+        <label class="option"><input type="radio" name="q48" value="1"> Спасение, задержание, пресечение, осмотр при подозрении на запрещённые предметы</label>
+        <label class="option"><input type="radio" name="q48" value="0"> Только с согласия владельца</label>
+        <label class="option"><input type="radio" name="q48" value="0"> Никогда</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 5. ФЗ «О прокуратуре» -->
+  <div class="section">
+    <div class="section-title">Блок 5 · ФЗ «О прокуратуре»</div>
+    <div class="section-desc">► Надзор и полномочия (8 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">49</span>
+      <span class="q-text">Кто назначает Генерального прокурора РО?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q49" value="0"> Президент</label>
+        <label class="option"><input type="radio" name="q49" value="1"> Премьер-Министр РО</label>
+        <label class="option"><input type="radio" name="q49" value="0"> Совет Федерации</label>
+        <label class="option"><input type="radio" name="q49" value="0"> Госдума</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">50</span>
+      <span class="q-text">Что вправе делать прокурор при выявлении нарушения?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q50" value="0"> Только предупредить</label>
+        <label class="option"><input type="radio" name="q50" value="1"> Протест, представление, постановление, предостережение, освобождение незаконно задержанных</label>
+        <label class="option"><input type="radio" name="q50" value="0"> Только возбудить дело</label>
+        <label class="option"><input type="radio" name="q50" value="0"> Только доложить</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">51</span>
+      <span class="q-text">Срок рассмотрения протеста прокурора?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q51" value="0"> 1 день</label>
+        <label class="option"><input type="radio" name="q51" value="1"> 2 дня</label>
+        <label class="option"><input type="radio" name="q51" value="0"> 3 дня</label>
+        <label class="option"><input type="radio" name="q51" value="0"> 5 дней</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">52</span>
+      <span class="q-text">Допускается ли задержание прокурора?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q52" value="0"> Да, всегда</label>
+        <label class="option"><input type="radio" name="q52" value="1"> Нет, кроме случаев обеспечения безопасности других лиц</label>
+        <label class="option"><input type="radio" name="q52" value="0"> Да, по решению ВП</label>
+        <label class="option"><input type="radio" name="q52" value="0"> Да, по решению ГА</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">53</span>
+      <span class="q-text">Сколько времени даётся на исполнение представления прокурора?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q53" value="0"> 1 день</label>
+        <label class="option"><input type="radio" name="q53" value="1"> 3 дня</label>
+        <label class="option"><input type="radio" name="q53" value="0"> 5 дней</label>
+        <label class="option"><input type="radio" name="q53" value="0"> 7 дней</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">54</span>
+      <span class="q-text">Кто координирует борьбу с преступностью?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q54" value="0"> МВД</label>
+        <label class="option"><input type="radio" name="q54" value="1"> Генеральный прокурор и подчинённые прокуроры</label>
+        <label class="option"><input type="radio" name="q54" value="0"> ФСБ</label>
+        <label class="option"><input type="radio" name="q54" value="0"> Армия</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">55</span>
+      <span class="q-text">Когда прокурор вправе освободить незаконно задержанного?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q55" value="0"> Никогда</label>
+        <label class="option"><input type="radio" name="q55" value="1"> При установлении факта незаконного задержания — своим постановлением</label>
+        <label class="option"><input type="radio" name="q55" value="0"> Только через суд</label>
+        <label class="option"><input type="radio" name="q55" value="0"> Только с разрешения ГА</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">56</span>
+      <span class="q-text">Что грозит за неисполнение требований прокурора?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q56" value="0"> Ничего</label>
+        <label class="option"><input type="radio" name="q56" value="1"> Ответственность по законодательству РО</label>
+        <label class="option"><input type="radio" name="q56" value="0"> Предупреждение</label>
+        <label class="option"><input type="radio" name="q56" value="0"> Штраф 1 000 ₽</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 6. ФЗ «О оружии» -->
+  <div class="section">
+    <div class="section-title">Блок 6 · ФЗ «О регулировании оборота оружия»</div>
+    <div class="section-desc">► Оружие, спецсредства, лицензии (8 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">57</span>
+      <span class="q-text">Что относится к специальным средствам (гл. II)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q57" value="0"> Только бронежилеты</label>
+        <label class="option"><input type="radio" name="q57" value="1"> Бронежилеты, электрошок, дубинка, наручники, гранаты, дрон, медикаменты</label>
+        <label class="option"><input type="radio" name="q57" value="0"> Только наручники</label>
+        <label class="option"><input type="radio" name="q57" value="0"> Только дубинка</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">58</span>
+      <span class="q-text">Стоимость лицензии на гражданское оружие (гл. IX)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q58" value="0"> 5 000 ₽</label>
+        <label class="option"><input type="radio" name="q58" value="1"> 15 000 ₽ + 5 000 ₽ за экзамен</label>
+        <label class="option"><input type="radio" name="q58" value="0"> 50 000 ₽</label>
+        <label class="option"><input type="radio" name="q58" value="0"> 100 000 ₽</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">59</span>
+      <span class="q-text">Кому не выдаётся лицензия на гражданское оружие?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q59" value="0"> Без медсправки</label>
+        <label class="option"><input type="radio" name="q59" value="1"> Судимым, без медсправки, не прошедшим экзамен</label>
+        <label class="option"><input type="radio" name="q59" value="0"> Только судимым</label>
+        <label class="option"><input type="radio" name="q59" value="0"> Только без медсправки</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">60</span>
+      <span class="q-text">Как хранится оружие (гл. VIII)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q60" value="0"> Заряженным</label>
+        <label class="option"><input type="radio" name="q60" value="1"> Разряженным, с предохранителем, в сейфе</label>
+        <label class="option"><input type="radio" name="q60" value="0"> В машине</label>
+        <label class="option"><input type="radio" name="q60" value="0"> На поясе</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">61</span>
+      <span class="q-text">Кто не обязан иметь лицензию на служебное оружие (гл. IV)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q61" value="0"> Сотрудники МВД</label>
+        <label class="option"><input type="radio" name="q61" value="1"> Военнослужащие Армии</label>
+        <label class="option"><input type="radio" name="q61" value="0"> Сотрудники ФСБ</label>
+        <label class="option"><input type="radio" name="q61" value="0"> Сотрудники ВП</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">62</span>
+      <span class="q-text">Что запрещено с оружием (гл. VIII)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q62" value="0"> Только продажа</label>
+        <label class="option"><input type="radio" name="q62" value="1"> Ношение гражданами, перевозка в багажнике, передача посторонним</label>
+        <label class="option"><input type="radio" name="q62" value="0"> Только передача</label>
+        <label class="option"><input type="radio" name="q62" value="0"> Только перевозка</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">63</span>
+      <span class="q-text">Когда разрешена самооборона с оружием (гл. VII)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q63" value="0"> Всегда</label>
+        <label class="option"><input type="radio" name="q63" value="1"> При вооружённом или групповом нападении; при одиночном — соразмерно</label>
+        <label class="option"><input type="radio" name="q63" value="0"> Только в жилище</label>
+        <label class="option"><input type="radio" name="q63" value="0"> Никогда</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">64</span>
+      <span class="q-text">Кто вправе вести надзор за оборотом оружия у госслужащих при военном положении (гл. X)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q64" value="0"> Только прокуратура</label>
+        <label class="option"><input type="radio" name="q64" value="1"> Армия</label>
+        <label class="option"><input type="radio" name="q64" value="0"> Только МВД</label>
+        <label class="option"><input type="radio" name="q64" value="0"> Только ФСБ</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 7. ФЗ «Об обороне» + ВП/ЧП -->
+  <div class="section">
+    <div class="section-title">Блок 7 · ФЗ «Об обороне» и правовые режимы</div>
+    <div class="section-desc">► ВП, ЧП, полномочия Армии (8 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">65</span>
+      <span class="q-text">Срок действия военного положения (ФКЗ № 3)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q65" value="0"> 6 часов</label>
+        <label class="option"><input type="radio" name="q65" value="1"> 12 часов</label>
+        <label class="option"><input type="radio" name="q65" value="0"> 24 часа</label>
+        <label class="option"><input type="radio" name="q65" value="0"> 48 часов</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">66</span>
+      <span class="q-text">Кто руководит территорией при ВП/ЧП?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q66" value="0"> Армия</label>
+        <label class="option"><input type="radio" name="q66" value="1"> ФСБ</label>
+        <label class="option"><input type="radio" name="q66" value="0"> МВД</label>
+        <label class="option"><input type="radio" name="q66" value="0"> Прокуратура</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">67</span>
+      <span class="q-text">Что вправе делать Армия при ВП (ст. 4 ФКЗ)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q67" value="0"> Только охранять</label>
+        <label class="option"><input type="radio" name="q67" value="1"> Усилить охрану, ограничить въезд, обыск ТС, задержание нарушителей</label>
+        <label class="option"><input type="radio" name="q67" value="0"> Только патрулировать</label>
+        <label class="option"><input type="radio" name="q67" value="0"> Только наблюдать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">68</span>
+      <span class="q-text">Когда Армия вправе применять оружие без предупреждения (ФЗ «Об обороне», ст. 17)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q68" value="0"> Всегда</label>
+        <label class="option"><input type="radio" name="q68" value="1"> При отражении вооружённого нападения</label>
+        <label class="option"><input type="radio" name="q68" value="0"> Никогда</label>
+        <label class="option"><input type="radio" name="q68" value="0"> При отказе остановиться</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">69</span>
+      <span class="q-text">Что вправе делать Армия по ФЗ «Об обороне» (ст. 12.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q69" value="0"> Только охранять</label>
+        <label class="option"><input type="radio" name="q69" value="1"> Требовать порядок, пресекать преступления, обыск ТС, личный обыск на КПП, задерживать</label>
+        <label class="option"><input type="radio" name="q69" value="0"> Только патрулировать</label>
+        <label class="option"><input type="radio" name="q69" value="0"> Только наблюдать</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">70</span>
+      <span class="q-text">Кто вводит ЧП и ВП?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q70" value="0"> ГА</label>
+        <label class="option"><input type="radio" name="q70" value="1"> Премьер-Министр РО</label>
+        <label class="option"><input type="radio" name="q70" value="0"> Начальник ВС</label>
+        <label class="option"><input type="radio" name="q70" value="0"> Генпрокурор</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">71</span>
+      <span class="q-text">Сколько прикомандированных медиков на подразделение (Устав ВС, ст. 9.8)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q71" value="0"> 1</label>
+        <label class="option"><input type="radio" name="q71" value="1"> 2</label>
+        <label class="option"><input type="radio" name="q71" value="0"> 3</label>
+        <label class="option"><input type="radio" name="q71" value="0"> Без ограничений</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">72</span>
+      <span class="q-text">Что делать, если командир требует выполнения запрещённого медзаключением (Устав ВС, ст. 9.3)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q72" value="0"> Выполнить</label>
+        <label class="option"><input type="radio" name="q72" value="1"> Не выполнять, доложить, ссылаться на заключение</label>
+        <label class="option"><input type="radio" name="q72" value="0"> Уволиться</label>
+        <label class="option"><input type="radio" name="q72" value="0"> Промолчать</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 8. УКПС + ДУ + Устав ВС -->
+  <div class="section">
+    <div class="section-title">Блок 8 · Уставы ВС РО</div>
+    <div class="section-desc">► Постовая служба, дисциплина, порядок (10 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">73</span>
+      <span class="q-text">Кто освобождён от проверок на КПП (УКПС, ст. 31)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q73" value="0"> Полковник</label>
+        <label class="option"><input type="radio" name="q73" value="1"> Генерал-лейтенант и выше</label>
+        <label class="option"><input type="radio" name="q73" value="0"> Майор</label>
+        <label class="option"><input type="radio" name="q73" value="0"> Подполковник</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">74</span>
+      <span class="q-text">Что проверяет постовой у убывающих в гражданской форме (УКПС, ст. 30)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q74" value="0"> Ничего</label>
+        <label class="option"><input type="radio" name="q74" value="1"> Подтверждение сдачи оружия, удостоверение, багажник</label>
+        <label class="option"><input type="radio" name="q74" value="0"> Только удостоверение</label>
+        <label class="option"><input type="radio" name="q74" value="0"> Только багажник</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">75</span>
+      <span class="q-text">Кто проходит через КПП №2 (УКПС, ст. 32)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q75" value="0"> Личный транспорт</label>
+        <label class="option"><input type="radio" name="q75" value="1"> Колонны, патрули, кортежи при закрытии КПП-1</label>
+        <label class="option"><input type="radio" name="q75" value="0"> Гражданские пешком</label>
+        <label class="option"><input type="radio" name="q75" value="0"> Все</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">76</span>
+      <span class="q-text">Что такое режимный объект (УКПС, ст. 37)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q76" value="0"> Перед КПП</label>
+        <label class="option"><input type="radio" name="q76" value="1"> Территория внутри периметра части</label>
+        <label class="option"><input type="radio" name="q76" value="0"> Город</label>
+        <label class="option"><input type="radio" name="q76" value="0"> Полигон</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">77</span>
+      <span class="q-text">Какие виды взысканий существуют (ДУ, ст. 6)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q77" value="0"> Только выговор</label>
+        <label class="option"><input type="radio" name="q77" value="1"> Беседа, выговор, строгий, понижение, увольнение</label>
+        <label class="option"><input type="radio" name="q77" value="0"> Штраф и арест</label>
+        <label class="option"><input type="radio" name="q77" value="0"> Только устное</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">78</span>
+      <span class="q-text">Срок отработки активного выговора (ДУ, ст. 6.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q78" value="0"> 24 часа</label>
+        <label class="option"><input type="radio" name="q78" value="1"> 48 часов</label>
+        <label class="option"><input type="radio" name="q78" value="0"> 72 часа</label>
+        <label class="option"><input type="radio" name="q78" value="0"> 96 часов</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">79</span>
+      <span class="q-text">Сколько активных выговоров ведут к увольнению (ДУ, ст. 6.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q79" value="0"> 1</label>
+        <label class="option"><input type="radio" name="q79" value="0"> 2</label>
+        <label class="option"><input type="radio" name="q79" value="1"> 3</label>
+        <label class="option"><input type="radio" name="q79" value="0"> 5</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">80</span>
+      <span class="q-text">Когда бодикамера обязательна (Устав ВС, ст. 3.5)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q80" value="0"> Только на посту</label>
+        <label class="option"><input type="radio" name="q80" value="1"> ВП, ОСБ, КПП, патрули, задержания, поставки</label>
+        <label class="option"><input type="radio" name="q80" value="0"> Только в бою</label>
+        <label class="option"><input type="radio" name="q80" value="0"> Только на поставках</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">81</span>
+      <span class="q-text">Можно ли брать оружие при выходе из части (Устав ВС, ст. 3.4.2)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q81" value="0"> Да</label>
+        <label class="option"><input type="radio" name="q81" value="1"> Нет, кроме ССО/ГРУ/ВП при служебной задаче</label>
+        <label class="option"><input type="radio" name="q81" value="0"> Только офицерам</label>
+        <label class="option"><input type="radio" name="q81" value="0"> Всегда</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">82</span>
+      <span class="q-text">Что делать при ухудшении здоровья на посту (УКПС, ст. 26.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q82" value="0"> Уйти домой</label>
+        <label class="option"><input type="radio" name="q82" value="1"> Доложить, вызвать помощь, сдать пост сменяющему</label>
+        <label class="option"><input type="radio" name="q82" value="0"> Терпеть</label>
+        <label class="option"><input type="radio" name="q82" value="0"> Позвонить другу</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 9. ПОСТАВКИ + ТАКТИКА -->
+  <div class="section">
+    <div class="section-title">Блок 9 · Поставки и тактика</div>
+    <div class="section-desc">► Правила, нормативы, решения (10 вопросов)</div>
+
+    <div class="q">
+      <span class="q-num">83</span>
+      <span class="q-text">Время поставок Армии (Правила поставок, п. 3.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q83" value="0"> 10:00–20:00</label>
+        <label class="option"><input type="radio" name="q83" value="1"> 13:00–22:15</label>
+        <label class="option"><input type="radio" name="q83" value="0"> 15:00–16:00</label>
+        <label class="option"><input type="radio" name="q83" value="0"> 12:00–23:00</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">84</span>
+      <span class="q-text">Минимум участников и техники (Правила поставок, п. 2.1)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q84" value="0"> 3/2</label>
+        <label class="option"><input type="radio" name="q84" value="1"> 6/4</label>
+        <label class="option"><input type="radio" name="q84" value="0"> 10/5</label>
+        <label class="option"><input type="radio" name="q84" value="0"> 5/3</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">85</span>
+      <span class="q-text">Минимальный объём груза (Правила поставок, п. 2.1.2)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q85" value="0"> 1000/1000/500</label>
+        <label class="option"><input type="radio" name="q85" value="1"> 3000/3000/1500</label>
+        <label class="option"><input type="radio" name="q85" value="0"> 5000/5000/2000</label>
+        <label class="option"><input type="radio" name="q85" value="0"> 2000/2000/1000</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">86</span>
+      <span class="q-text">Что делать при нападении (Правила поставок, п. 1.4)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q86" value="0"> Ехать дальше</label>
+        <label class="option"><input type="radio" name="q86" value="1"> Остановиться и начать перестрелку</label>
+        <label class="option"><input type="radio" name="q86" value="0"> Развернуться</label>
+        <label class="option"><input type="radio" name="q86" value="0"> Бросить груз</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">87</span>
+      <span class="q-text">Сколько видеозаписей требуется (Правила поставок, п. 2.4, 3.4)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q87" value="0"> 1</label>
+        <label class="option"><input type="radio" name="q87" value="1"> 2</label>
+        <label class="option"><input type="radio" name="q87" value="0"> 3</label>
+        <label class="option"><input type="radio" name="q87" value="0"> 4</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">88</span>
+      <span class="q-text">Безопасный час для госпоставок (Правила поставок, п. 1.9)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q88" value="0"> 12:00–13:00</label>
+        <label class="option"><input type="radio" name="q88" value="1"> 15:00–16:00</label>
+        <label class="option"><input type="radio" name="q88" value="0"> 20:00–21:00</label>
+        <label class="option"><input type="radio" name="q88" value="0"> 10:00–11:00</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">89</span>
+      <span class="q-text">Где запрещено поджидать организации (Правила поставок, п. 1.6)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q89" value="0"> 50 м</label>
+        <label class="option"><input type="radio" name="q89" value="1"> 150 м (Армия — 300 м от КПП)</label>
+        <label class="option"><input type="radio" name="q89" value="0"> 500 м</label>
+        <label class="option"><input type="radio" name="q89" value="0"> 100 м</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">90</span>
+      <span class="q-text">Можно ли вызывать подкрепление при нападении (Правила поставок, п. 2.3)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q90" value="0"> Да, всегда</label>
+        <label class="option"><input type="radio" name="q90" value="1"> Нет, кроме повторного нападения или рейда</label>
+        <label class="option"><input type="radio" name="q90" value="0"> Только с разрешения ГА</label>
+        <label class="option"><input type="radio" name="q90" value="0"> Никогда</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">91</span>
+      <span class="q-text">Сколько раз криминал может напасть на госпоставку в день (Правила поставок, п. 4.11)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q91" value="0"> 1</label>
+        <label class="option"><input type="radio" name="q91" value="1"> 2</label>
+        <label class="option"><input type="radio" name="q91" value="0"> 3</label>
+        <label class="option"><input type="radio" name="q91" value="0"> Без ограничений</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">92</span>
+      <span class="q-text">Можно ли разделить заказ на несколько поставок (Правила поставок, п. 2.1.3)?</span>
+      <div class="options">
+        <label class="option"><input type="radio" name="q92" value="0"> Да</label>
+        <label class="option"><input type="radio" name="q92" value="1"> Нет, только одной поставкой</label>
+        <label class="option"><input type="radio" name="q92" value="0"> Только с разрешения куратора</label>
+        <label class="option"><input type="radio" name="q92" value="0"> Только по выходным</label>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="calculateResult()">► ПОДСЧИТАТЬ РЕЗУЛЬТАТ</button>
+</form>
+
+<div id="result"></div>
+
+<div class="footer">
+  <span class="footer-star">★</span>
+  ГРУ · ВДВ · СИЛА В ТЕНИ
+  <span class="footer-star">★</span>
+</div>
+
+<script>
+function calculateResult(){
+  const form = document.getElementById('quizForm');
+  const result = document.getElementById('result');
+
+  const blocks = {
+    'Блок 1 · УК РО': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    'Блок 2 · УПК РО': [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+    'Блок 3 · КоАП РО': [31,32,33,34,35,36,37,38,39,40],
+    'Блок 4 · ФЗ «О полиции»': [41,42,43,44,45,46,47,48],
+    'Блок 5 · ФЗ «О прокуратуре»': [49,50,51,52,53,54,55,56],
+    'Блок 6 · ФЗ «О оружии»': [57,58,59,60,61,62,63,64],
+    'Блок 7 · ФЗ «Об обороне» + ВП/ЧП': [65,66,67,68,69,70,71,72],
+    'Блок 8 · Уставы ВС РО': [73,74,75,76,77,78,79,80,81,82],
+    'Блок 9 · Поставки и тактика': [83,84,85,86,87,88,89,90,91,92]
+  };
+
+  let total = 0, max = 0;
+  let blockResults = [];
+
+  for(const [name, nums] of Object.entries(blocks)){
+    let score = 0;
+    nums.forEach(n => {
+      const val = form.querySelector(`input[name="q${n}"]:checked`);
+      if(val) score += parseInt(val.value);
+    });
+    total += score;
+    max += nums.length;
+    blockResults.push({name, score, max: nums.length});
+  }
+
+  let status, statusClass, decision;
+  const percent = (total / max) * 100;
+
+  if(percent >= 90){
+    status = "★ ДОПУЩЕН ★";
+    statusClass = "pass";
+    decision = "Кандидат полностью знает законодательство. Допуск к должности Старшего Инструктора без ограничений.";
+  } else if(percent >= 80){
+    status = "✓ ДОПУЩЕН УСЛОВНО";
+    statusClass = "warn";
+    decision = "Кандидат знает материал, но есть пробелы. Испытательный срок 7 дней.";
+  } else {
+    status = "✗ НЕ ДОПУЩЕН";
+    statusClass = "fail";
+    decision = "Кандидат не знает законодательство. Повторный экзамен — не ранее чем через 7 дней.";
+  }
+
+  result.className = "show result-" + (statusClass === "pass" ? "pass" : statusClass === "warn" ? "warn" : "fail");
+  let rows = blockResults.map(b =>
+    `<tr><td>${b.name}</td><td>${b.score}</td><td>${b.max}</td></tr>`
+  ).join('');
+
+  result.innerHTML = `
+    <div class="result-title ${statusClass}">${status}</div>
+    <p style="text-align:center; color:var(--vdv);">${decision}</p>
+    <table class="score-table">
+      <tr><th>Блок</th><th>Баллы</th><th>Макс.</th></tr>
+      ${rows}
+      <tr><td><strong>ИТОГО</strong></td><td><strong>${total}</strong></td><td><strong>${max}</strong></td></tr>
+      <tr><td><strong>ПРОЦЕНТ</strong></td><td colspan="2"><strong>${percent.toFixed(1)}%</strong></td></tr>
+    </table>
+    <p style="margin-top:20px; color:var(--muted); font-size:0.8em; text-align:center; letter-spacing:2px;">
+      ДАТА: ${new Date().toLocaleString('ru-RU')}
+    </p>
+  `;
+
+  result.scrollIntoView({behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>
