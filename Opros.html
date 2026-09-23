@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ГРУ · ОБЗВОН · ВОПРОС-ОТВЕТ</title>
+<style>
+  :root{
+    --bg:#0a0f14; --card:#111820; --card2:#182230; --border:#243244;
+    --gru:#00a8e8; --vdv:#4fc3f7; --green:#4caf50; --red:#e53935;
+    --yellow:#ffb300; --text:#d0d8e0; --muted:#7a8899; --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,rgba(0,168,232,0.05) 0%,transparent 300px),
+    repeating-linear-gradient(45deg,#0a0f14,#0a0f14 10px,#0c1219 10px,#0c1219 20px);
+    color:var(--text); font-family:'Courier New',monospace;
+    line-height:1.6; padding:20px; max-width:1100px; margin:0 auto;
+  }
+  header{
+    text-align:center; padding:35px 20px;
+    background:linear-gradient(135deg,#111820,#182230);
+    border:2px solid var(--gru); border-radius:4px; margin-bottom:25px;
+    position:relative;
+  }
+  header::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg,var(--gru),var(--vdv),var(--gru));
+  }
+  header h1{
+    color:var(--white); font-size:2em; letter-spacing:4px;
+    text-transform:uppercase; text-shadow:0 0 20px rgba(0,168,232,0.6);
+    margin-bottom:10px;
+  }
+  header h1 span{color:var(--gru);}
+  header p{color:var(--vdv); font-size:0.9em; letter-spacing:2px; text-transform:uppercase;}
+  .badge{
+    display:inline-block; background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; padding:6px 18px; border-radius:2px;
+    font-size:0.75em; font-weight:700; margin-top:10px;
+    letter-spacing:2px; text-transform:uppercase;
+  }
+  .meta{
+    display:flex; justify-content:space-around; flex-wrap:wrap;
+    gap:10px; padding:15px; margin-bottom:20px;
+    background:var(--card); border:1px solid var(--border); border-radius:4px;
+    font-size:0.85em;
+  }
+  .meta-item{color:var(--muted);}
+  .meta-item strong{color:var(--vdv);}
+  .section{
+    background:var(--card); border:1px solid var(--border);
+    border-left:4px solid var(--gru); border-radius:4px;
+    padding:20px; margin-bottom:20px;
+  }
+  .section-title{
+    color:var(--vdv); font-size:1.1em; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:5px; display:flex; align-items:center; gap:10px;
+  }
+  .section-title::before{content:"◤"; color:var(--gru);}
+  .section-desc{color:var(--muted); font-size:0.8em; letter-spacing:1px; margin-bottom:15px; padding-left:20px;}
+
+  .q{
+    background:var(--card2); border:1px solid var(--border);
+    border-radius:3px; padding:15px; margin-bottom:12px;
+  }
+  .q-header{
+    display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;
+  }
+  .q-num{
+    display:inline-block; background:var(--gru); color:#000;
+    min-width:32px; height:28px; line-height:28px; text-align:center;
+    font-weight:700; font-size:0.85em; flex-shrink:0;
+  }
+  .q-text{color:var(--white); font-weight:700; font-size:0.95em;}
+  .q-answer{
+    color:var(--muted); font-size:0.85em;
+    padding:10px 15px; margin-top:8px;
+    background:#0d141c; border-left:2px solid var(--gru);
+    border-radius:2px;
+  }
+  .q-answer::before{
+    content:"ОТВЕТ: ";
+    color:var(--gru); font-weight:700;
+  }
+  .rating{
+    display:flex; gap:15px; margin-top:10px; padding-top:10px;
+    border-top:1px solid var(--border); flex-wrap:wrap;
+  }
+  .rating label{
+    display:flex; align-items:center; gap:6px;
+    cursor:pointer; font-size:0.85em;
+  }
+  .rating input{accent-color:var(--gru); cursor:pointer;}
+  .rating .r-good{color:var(--green);}
+  .rating .r-part{color:var(--yellow);}
+  .rating .r-bad{color:var(--red);}
+
+  .flag-section{
+    border-left:4px solid var(--red);
+  }
+  .flag-section .section-title{color:var(--red);}
+  .flag-section .section-title::before{color:var(--red);}
+  .flag{
+    background:#2d1618; border:1px solid var(--red);
+    border-radius:3px; padding:12px; margin-bottom:8px;
+  }
+  .flag label{display:flex; align-items:center; gap:10px; cursor:pointer;}
+  .flag input{accent-color:var(--red);}
+
+  button{
+    background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; border:none; padding:16px 30px; border-radius:3px;
+    font-size:1.1em; font-weight:700; cursor:pointer; width:100%;
+    transition:all 0.2s; margin-top:10px; letter-spacing:3px;
+    text-transform:uppercase; font-family:'Courier New',monospace;
+  }
+  button:hover{box-shadow:0 0 25px rgba(0,168,232,0.6); transform:translateY(-2px);}
+
+  #result{
+    display:none; margin-top:20px; padding:25px;
+    border-radius:4px; border:2px solid var(--border);
+    background:var(--card2);
+  }
+  #result.show{display:block; animation:fadeIn 0.5s;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  .result-pass{border-color:var(--green); box-shadow:0 0 30px rgba(76,175,80,0.3);}
+  .result-warn{border-color:var(--yellow); box-shadow:0 0 30px rgba(255,179,0,0.3);}
+  .result-fail{border-color:var(--red); box-shadow:0 0 30px rgba(229,57,53,0.3);}
+  .result-title{font-size:1.5em; font-weight:700; margin-bottom:15px; letter-spacing:3px; text-transform:uppercase; text-align:center;}
+  .pass{color:var(--green);}
+  .warn{color:var(--yellow);}
+  .fail{color:var(--red);}
+  .score-table{width:100%; border-collapse:collapse; margin-top:15px;}
+  .score-table th,.score-table td{border:1px solid var(--border); padding:10px; text-align:left; font-size:0.9em;}
+  .score-table th{background:#0d141c; color:var(--vdv); text-transform:uppercase; letter-spacing:1px; font-size:0.8em;}
+  .footer{
+    text-align:center; color:var(--muted); font-size:0.75em;
+    margin-top:40px; padding-top:20px;
+    border-top:1px solid var(--border); letter-spacing:3px; text-transform:uppercase;
+  }
+  .footer-star{color:var(--gru); margin:0 10px;}
+  .motto{text-align:center; color:var(--vdv); font-style:italic; font-size:0.9em; margin:20px 0; letter-spacing:1px; opacity:0.8;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ГРУ <span>·</span> ОБЗВОН</h1>
+  <p>Устный опрос · Инструктор / Старший Инструктор</p>
+  <div class="badge">23.09.26 · 20:30</div>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><strong>Кандидат:</strong> _______________</div>
+  <div class="meta-item"><strong>Статик:</strong> _______________</div>
+  <div class="meta-item"><strong>Возраст:</strong> 16+</div>
+  <div class="meta-item"><strong>Инструктор:</strong> _______________</div>
+</div>
+
+<div class="motto">«Видеть больше. Действовать раньше.»</div>
+
+<form id="quizForm">
+
+  <!-- БЛОК 1. УКПС -->
+  <div class="section">
+    <div class="section-title">Блок 1 · Устав караульно-постовой службы</div>
+    <div class="section-desc">► 20 вопросов</div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">01</span>
+        <span class="q-text">Кто может заступить на постовую службу?</span>
+      </div>
+      <div class="q-answer">Любой военнослужащий со звания Рядовой.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q1" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q1" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q1" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">02</span>
+        <span class="q-text">Что такое режимный объект?</span>
+      </div>
+      <div class="q-answer">Территория внутри периметра части, доступ через КПП №1 и №2. Внешняя сторона КПП — не режимный объект.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q2" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q2" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q2" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">03</span>
+        <span class="q-text">Что запрещено на посту?</span>
+      </div>
+      <div class="q-answer">Спать, сидеть, прислоняться, читать, писать, петь, есть, пить, курить, принимать/передавать предметы, справлять нужды, досылать патрон, использовать личную связь, танцевать.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q3" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q3" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q3" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">04</span>
+        <span class="q-text">Кто проходит через КПП №2?</span>
+      </div>
+      <div class="q-answer">Колонны снабжения, призывные колонны, служебный транспорт, патрули, правительственные кортежи — только при закрытии КПП №1 или по приказу командования.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q4" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q4" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q4" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">05</span>
+        <span class="q-text">Кто освобождён от проверок на КПП?</span>
+      </div>
+      <div class="q-answer">Генерал-лейтенант и выше. Постовые обязаны знать их в лицо.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q5" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q5" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q5" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">06</span>
+        <span class="q-text">Что проверяет постовой у убывающих в гражданской форме?</span>
+      </div>
+      <div class="q-answer">Удостоверение, подтверждение сдачи оружия, боеприпасов и спецсредств, багажник транспортного средства.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q6" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q6" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q6" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">07</span>
+        <span class="q-text">Что делать при попытке проникновения на территорию?</span>
+      </div>
+      <div class="q-answer">Доложить по рации, включить бодикамеру, пресечь в пределах полномочий, вызвать ВП/дежурного, передать задержанного.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q7" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q7" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q7" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">08</span>
+        <span class="q-text">Что делать при ухудшении здоровья на посту?</span>
+      </div>
+      <div class="q-answer">Доложить дежурному/старшему наряда, вызвать медпомощь. Покинуть пост только после сдачи сменяющему. При экстренной помощи — помощь безотлагательно, командование организует замену.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q8" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q8" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q8" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">09</span>
+        <span class="q-text">Какая экипировка обязательна на посту?</span>
+      </div>
+      <div class="q-answer">Тяжёлое защитное обмундирование, табельное оружие с боеприпасами, средства радиосвязи, спецсредства по должности, включённая бодикамера.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q9" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q9" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q9" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">10</span>
+        <span class="q-text">Что проверяется при приёме и сдаче поста?</span>
+      </div>
+      <div class="q-answer">Оружие, средства связи, состояние охраняемого объекта, наличие происшествий и замечаний. Смена фиксируется докладом в рацию.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q10" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q10" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q10" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">11</span>
+        <span class="q-text">Что запрещено делать с оружием на посту?</span>
+      </div>
+      <div class="q-answer">Оставлять без контроля, снимать с плеча без необходимости, досылать патрон в патронник без необходимости, доставать без необходимости.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q11" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q11" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q11" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">12</span>
+        <span class="q-text">Что делать, если гражданский мешает на посту?</span>
+      </div>
+      <div class="q-answer">Представиться, сделать замечание, доложить по рации, вызвать МВД через дежурного, не покидать пост, не применять силу без угрозы жизни.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q12" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q12" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q12" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">13</span>
+        <span class="q-text">Что делать, если военнослужащий убывает без увольнительной?</span>
+      </div>
+      <div class="q-answer">Не пропускать, доложить дежурному/ВП, удерживать до прибытия наряда. Квалифицируется по ст. 109 УК РО (самовольное оставление части).</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q13" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q13" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q13" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">14</span>
+        <span class="q-text">Когда бодикамера обязательна?</span>
+      </div>
+      <div class="q-answer">Для ВП, ОСБ, военнослужащих на КПП, патрулей, лиц, проводящих задержание. Также на всех мероприятиях ВС, включая поставки.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q14" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q14" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q14" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">15</span>
+        <span class="q-text">Что делать при неисправности бодикамеры?</span>
+      </div>
+      <div class="q-answer">Доложить старшему и зафиксировать обстоятельства в журнале.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q15" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q15" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q15" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">16</span>
+        <span class="q-text">Кто является старшим наряда?</span>
+      </div>
+      <div class="q-answer">Старший по званию военнослужащий из числа постовых в конкретном карауле. Старший наряда назначается приказом; старшинство по званию — только при отсутствии назначенного.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q16" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q16" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q16" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">17</span>
+        <span class="q-text">Разрешено ли покидать пост?</span>
+      </div>
+      <div class="q-answer">Нет. Постовой не покидает пост до прибытия смены. Исключение — сдача поста сменяющему при ухудшении здоровья или экстренной помощи.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q17" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q17" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q17" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">18</span>
+        <span class="q-text">Что делать, если начальник караула отдал приказ, противоречащий уставу?</span>
+      </div>
+      <div class="q-answer">Не выполнять, доложить вышестоящему начальнику (Устав ВС и ФСВНГ, ст. 1.3).</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q18" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q18" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q18" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">19</span>
+        <span class="q-text">Какие посты есть на территории части?</span>
+      </div>
+      <div class="q-answer">КПП №1, КПП №2, вышки №1–№8, главный склад, военный полигон.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q19" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q19" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q19" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">20</span>
+        <span class="q-text">Что делать при обнаружении нарушения другим военнослужащим?</span>
+      </div>
+      <div class="q-answer">Немедленно сообщить дежурному по части, в военную полицию или ОСБ и доложить непосредственному командиру.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q20" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q20" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q20" value="0"> Неверно</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 2. ДУ -->
+  <div class="section">
+    <div class="section-title">Блок 2 · Дисциплинарный устав</div>
+    <div class="section-desc">► 15 вопросов</div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">21</span>
+        <span class="q-text">Что такое воинская дисциплина?</span>
+      </div>
+      <div class="q-answer">Сознательное исполнение обязанностей, соблюдение субординации, уважение к службе и достоинству других лиц, бережное отношение к имуществу, готовность действовать в интересах подразделения.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q21" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q21" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q21" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">22</span>
+        <span class="q-text">Какие виды дисциплинарных взысканий существуют?</span>
+      </div>
+      <div class="q-answer">Беседа (устное предупреждение), устный выговор, строгий выговор, понижение в должности/звании, увольнение со службы.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q22" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q22" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q22" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">23</span>
+        <span class="q-text">Сколько активных выговоров ведут к увольнению?</span>
+      </div>
+      <div class="q-answer">Три активных выговора.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q23" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q23" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q23" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">24</span>
+        <span class="q-text">Сколько времени даётся на отработку активного выговора?</span>
+      </div>
+      <div class="q-answer">48 часов. Если не отработан — дополнительный устный выговор. Если не отработан в течение 96 часов — ещё один.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q24" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q24" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q24" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">25</span>
+        <span class="q-text">Сколько активных выговоров даёт строгий выговор?</span>
+      </div>
+      <div class="q-answer">Два активных выговора.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q25" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q25" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q25" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">26</span>
+        <span class="q-text">Что такое беседа как взыскание?</span>
+      </div>
+      <div class="q-answer">Устное предупреждение за малозначительное нарушение. В планшет не вносится.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q26" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q26" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q26" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">27</span>
+        <span class="q-text">Кто вправе объявить строгий выговор?</span>
+      </div>
+      <div class="q-answer">Начальник ВС, Начальник ФСВНГ и их заместители.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q27" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q27" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q27" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">28</span>
+        <span class="q-text">Кто рассматривает увольнение?</span>
+      </div>
+      <div class="q-answer">Генерал Армии или уполномоченное им должностное лицо по результатам проверки.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q28" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q28" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q28" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">29</span>
+        <span class="q-text">Что относится к нарушению субординации (ст. 8 ДУ)?</span>
+      </div>
+      <div class="q-answer">Неисполнение законного приказа, неуважительное обращение к старшему, действия, препятствующие исполнению приказа. Оскорбление, угроза, насилие — грубое нарушение.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q29" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q29" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q29" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">30</span>
+        <span class="q-text">Может ли инструктор назначить выговор?</span>
+      </div>
+      <div class="q-answer">Нет. Инструктор выявляет нарушение, фиксирует и готовит материалы. Решение о взыскании принимает должностное лицо с соответствующим полномочием.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q30" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q30" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q30" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">31</span>
+        <span class="q-text">Что такое самовольное оставление места службы?</span>
+      </div>
+      <div class="q-answer">Оставление части, подразделения, места несения службы или прекращение исполнения служебной задачи без уважительной причины. Квалифицируется по ст. 109 УК РО.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q31" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q31" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q31" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">32</span>
+        <span class="q-text">Что делать при неисполнении законного приказа подчинённым?</span>
+      </div>
+      <div class="q-answer">Зафиксировать нарушение, получить объяснение, подготовить материалы, доложить командиру. Решение о взыскании принимает уполномоченное лицо.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q32" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q32" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q32" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">33</span>
+        <span class="q-text">Какие меры поощрения существуют?</span>
+      </div>
+      <div class="q-answer">Снятие ранее наложенного взыскания, объявление благодарности, награждение ценным подарком или премией, досрочное присвоение звания, занесение в книгу почёта.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q33" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q33" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q33" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">34</span>
+        <span class="q-text">Что делать при получении заведомо незаконного приказа?</span>
+      </div>
+      <div class="q-answer">Не исполнять, незамедлительно доложить непосредственному или вышестоящему начальнику (Устав ВС и ФСВНГ, ст. 1.3).</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q34" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q34" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q34" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">35</span>
+        <span class="q-text">Может ли медицинское освобождение быть использовано как наказание?</span>
+      </div>
+      <div class="q-answer">Нет. Медицинское освобождение не является дисциплинарным взысканием и не может использоваться как наказание или средство давления.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q35" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q35" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q35" value="0"> Неверно</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 3. ПОСТАВКИ -->
+  <div class="section">
+    <div class="section-title">Блок 3 · Правила перехвата поставок</div>
+    <div class="section-desc">► 20 вопросов</div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">36</span>
+        <span class="q-text">Что такое поставка?</span>
+      </div>
+      <div class="q-answer">Любое передвижение матовозки, в т.ч. транспортировка/разгрузка/загрузка материалов/созданных предметов, с целью реализации, переработки и/или продажи.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q36" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q36" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q36" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">37</span>
+        <span class="q-text">Время поставок Армии?</span>
+      </div>
+      <div class="q-answer">С 13:00 до 22:15. Загрузка и транспортировка должны начаться до 22:15.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q37" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q37" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q37" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">38</span>
+        <span class="q-text">Минимум участников и техники при поставке?</span>
+      </div>
+      <div class="q-answer">Минимум 6 человек, максимум 60. Минимум 4 единицы наземной техники.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q38" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q38" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q38" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">39</span>
+        <span class="q-text">Минимальный объём груза?</span>
+      </div>
+      <div class="q-answer">Оружейные — 3000, медицинские — 3000, технические — 1500.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q39" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q39" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q39" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">40</span>
+        <span class="q-text">Что делать при нападении на поставку?</span>
+      </div>
+      <div class="q-answer">Остановиться и начать перестрелку.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q40" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q40" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q40" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">41</span>
+        <span class="q-text">Сколько видеозаписей требуется с поставки?</span>
+      </div>
+      <div class="q-answer">Минимум 2 (загрузка матовозок, оригинальный звук, качество не менее 720p, хранить 72 часа).</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q41" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q41" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q41" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">42</span>
+        <span class="q-text">Безопасный час для госпоставок?</span>
+      </div>
+      <div class="q-answer">С 15:00 до 16:00. Максимум 1 безопасная поставка в день, до 15 000 материалов.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q42" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q42" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q42" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">43</span>
+        <span class="q-text">Где запрещено поджидать организации?</span>
+      </div>
+      <div class="q-answer">Менее 150 м от точки загрузки/выгрузки/переработки. Для Армии — 300 м от КПП-1/КПП-2.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q43" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q43" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q43" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">44</span>
+        <span class="q-text">Можно ли вызывать подкрепление во время нападения на поставку?</span>
+      </div>
+      <div class="q-answer">Нет. Исключение: повторное нападение на поставку; рейд.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q44" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q44" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q44" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">45</span>
+        <span class="q-text">Можно ли разделить заказ на несколько поставок?</span>
+      </div>
+      <div class="q-answer">Нет. Игроки Армии обязаны довести весь заказ одной единой поставкой, без разделения на несколько партий.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q45" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q45" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q45" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">46</span>
+        <span class="q-text">Сколько раз криминал может напасть на госпоставку в день?</span>
+      </div>
+      <div class="q-answer">2 раза в день. Считаются только успешные поставки (матовозки захвачены/материалы доставлены).</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q46" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q46" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q46" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">47</span>
+        <span class="q-text">Что запрещено с матовозкой?</span>
+      </div>
+      <div class="q-answer">Запрещено респавнить матовозку до окончания поставки, намеренно удерживать чужую матовозку, намеренно уничтожать матовозку.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q47" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q47" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q47" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">48</span>
+        <span class="q-text">Когда можно начинать перестрелку при перехвате?</span>
+      </div>
+      <div class="q-answer">При полной остановке колонны. Сотрудникам госструктур разрешено остановить колонну, если увидели полноценное перекрытие от преступной группировки.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q48" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q48" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q48" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">49</span>
+        <span class="q-text">Где производится разгрузка/загрузка материалов?</span>
+      </div>
+      <div class="q-answer">Исключительно на функциональных метках.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q49" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q49" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q49" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">50</span>
+        <span class="q-text">Разрешено ли использовать личный транспорт при поставке?</span>
+      </div>
+      <div class="q-answer">Нет. Исключение: следователи под прикрытием для сбора информации, не участвующие в перестрелке.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q50" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q50" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q50" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">51</span>
+        <span class="q-text">Можно ли намеренно менять маршрут или разворачиваться во время поставки?</span>
+      </div>
+      <div class="q-answer">Запрещено намеренно разворачиваться либо менять маршрут (в случае увиденного перекрытия или информации о перекрытии).</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q51" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q51" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q51" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">52</span>
+        <span class="q-text">Разрешено ли использовать снайперские винтовки при перехвате?</span>
+      </div>
+      <div class="q-answer">Запрещено. Наказание: HardBan 3–5 дней + изъятие спецвооружения.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q52" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q52" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q52" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">53</span>
+        <span class="q-text">Что делать, если материалы/предметы доставлены с нарушением правил?</span>
+      </div>
+      <div class="q-answer">На усмотрение главного куратора они могут быть изъяты у фракции и возвращены пострадавшей стороне.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q53" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q53" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q53" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">54</span>
+        <span class="q-text">Запрещено ли взаимодействовать с грузом матовозки до окончания перестрелки?</span>
+      </div>
+      <div class="q-answer">Да, запрещено садиться, увозить, удерживать, похищать и взаимодействовать с грузом до окончания перестрелки.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q54" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q54" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q54" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">55</span>
+        <span class="q-text">Разрешено ли намеренно затягивать процесс поставки/загрузки/крафта?</span>
+      </div>
+      <div class="q-answer">Нет. Наказание: Demorgan 90 минут.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q55" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q55" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q55" value="0"> Неверно</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 4. ФИЛЬТР ЗРЕЛОСТИ -->
+  <div class="section">
+    <div class="section-title">Блок 4 · Логика и зрелость</div>
+    <div class="section-desc">► Проверка мышления и реакции (задаётся устно, оценивается инструктором)</div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">56</span>
+        <span class="q-text">Ты на посту. Видишь тень у склада. Действия?</span>
+      </div>
+      <div class="q-answer">Доложить по рации, включить камеру, остаться на посту, не бежать ловить.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q56" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q56" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q56" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">57</span>
+        <span class="q-text">Командир отдал странный приказ. Действия?</span>
+      </div>
+      <div class="q-answer">Уточнить. Если законный — выполнить. Если незаконный — доложить вышестоящему.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q57" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q57" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q57" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">58</span>
+        <span class="q-text">Товарищ нарушил устав. Ты видел. Действия?</span>
+      </div>
+      <div class="q-answer">Зафиксировать и доложить командиру. Не покрывать, не наказывать самому.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q58" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q58" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q58" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">59</span>
+        <span class="q-text">Тебя оскорбили в голосовом чате. Действия?</span>
+      </div>
+      <div class="q-answer">Зафиксировать, доложить, не отвечать агрессией.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q59" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q59" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q59" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">60</span>
+        <span class="q-text">Зачем тебе должность Инструктора?</span>
+      </div>
+      <div class="q-answer">Конкретная цель: развитие, ответственность, польза подразделению. Не «друзья сказали» и не «власть».</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q60" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q60" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q60" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">61</span>
+        <span class="q-text">Сколько времени готов уделять службе?</span>
+      </div>
+      <div class="q-answer">Конкретно: 3–4 часа в день, по будням вечером. Не «когда захочу».</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q61" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q61" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q61" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">62</span>
+        <span class="q-text">Тебя повысили, товарища — нет. Он злится. Действия?</span>
+      </div>
+      <div class="q-answer">Поддержать, объяснить, не хвастаться.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q62" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q62" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q62" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">63</span>
+        <span class="q-text">Не согласен с решением командира. Как поступишь?</span>
+      </div>
+      <div class="q-answer">Обратиться по субординации, аргументировать. Не спорить публично.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q63" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q63" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q63" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">64</span>
+        <span class="q-text">Проиграл перестрелку. Что делаешь?</span>
+      </div>
+      <div class="q-answer">Проанализировать ошибки, доложить, работать над собой. Не обвинять других.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q64" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q64" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q64" value="0"> Неверно</label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-header">
+        <span class="q-num">65</span>
+        <span class="q-text">Расскажи о себе. Как тебя зовут, сколько лет?</span>
+      </div>
+      <div class="q-answer">Чёткий, связный ответ. Возраст 16+. Без «ну», «типа», «короче». Голос не детский.</div>
+      <div class="rating">
+        <label class="r-good"><input type="radio" name="q65" value="2"> Верно</label>
+        <label class="r-part"><input type="radio" name="q65" value="1"> Частично</label>
+        <label class="r-bad"><input type="radio" name="q65" value="0"> Неверно</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- БЛОК 5. КРАСНЫЕ ФЛАГИ -->
+  <div class="section flag-section">
+    <div class="section-title">Блок 5 · Красные флаги (мгновенный отказ)</div>
+    <div class="section-desc">► Отметь, если наблюдаешь у кандидата</div>
+
+    <div class="flag">
+      <label><input type="checkbox" name="f1"> Детский голос, ломается</label>
+    </div>
+    <div class="flag">
+      <label><input type="checkbox" name="f2"> Слова-паразиты через слово («ну», «типа», «короче»)</label>
+    </div>
+    <div class="flag">
+      <label><input type="checkbox" name="f3"> Отвечает «не знаю» на 3+ вопроса</label>
+    </div>
+    <div class="flag">
+      <label><input type="checkbox" name="f4"> Злится при уточняющих вопросах</label>
+    </div>
+    <div class="flag">
+      <label><input type="checkbox" name="f5"> Смеётся, когда вопрос серьёзный</label>
+    </div>
+    <div class="flag">
+      <label><input type="checkbox" name="f6"> Не может назвать причину повышения</label>
+    </div>
+    <div class="flag">
+      <label><input type="checkbox" name="f7"> Возраст младше 16 (по голосу/ответам)</label>
+    </div>
+  </div>
+
+  <button type="button" onclick="calculateResult()">► ПОДСЧИТАТЬ РЕЗУЛЬТАТ</button>
+</form>
+
+<div id="result"></div>
+
+<div class="footer">
+  <span class="footer-star">★</span>
+  ГРУ · ВДВ · СИЛА В ТЕНИ
+  <span class="footer-star">★</span>
+</div>
+
+<script>
+function calculateResult(){
+  const form = document.getElementById('quizForm');
+  const result = document.getElementById('result');
+
+  const blocks = {
+    'Блок 1 · УКПС': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+    'Блок 2 · Дисциплинарный устав': [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35],
+    'Блок 3 · Поставки': [36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55],
+    'Блок 4 · Логика и зрелость': [56,57,58,59,60,61,62,63,64,65]
+  };
+
+  let total = 0, max = 0;
+  let blockResults = [];
+
+  for(const [name, nums] of Object.entries(blocks)){
+    let score = 0;
+    nums.forEach(n => {
+      const val = form.querySelector(`input[name="q${n}"]:checked`);
+      if(val) score += parseInt(val.value);
+    });
+    total += score;
+    max += nums.length * 2;
+    blockResults.push({name, score, max: nums.length * 2});
+  }
+
+  // Красные флаги
+  let flags = 0;
+  for(let i=1;i<=7;i++){
+    if(form.querySelector(`input[name="f${i}"]`).checked) flags++;
+  }
+
+  let status, statusClass, decision;
+  const percent = (total / max) * 100;
+
+  if(flags >= 2){
+    status = "✗ ОТКАЗ (КРАСНЫЕ ФЛАГИ)";
+    statusClass = "fail";
+    decision = "Кандидат не прошёл фильтр зрелости. Повторный обзвон — не ранее чем через 7 дней.";
+  } else if(percent >= 85){
+    status = "★ ДОПУЩЕН ★";
+    statusClass = "pass";
+    decision = "Кандидат полностью готов. Допуск к должности без ограничений.";
+  } else if(percent >= 70){
+    status = "⚠ ИСПЫТАТЕЛЬНЫЙ СРОК";
+    statusClass = "warn";
+    decision = "Кандидат допустим условно. Требуется доработка. Повторная проверка через 3 дня.";
+  } else {
+    status = "✗ НЕ ДОПУЩЕН";
+    statusClass = "fail";
+    decision = "Кандидат не готов. Повторный обзвон — не ранее чем через 3 дня.";
+  }
+
+  result.className = "show result-" + (statusClass === "pass" ? "pass" : statusClass === "warn" ? "warn" : "fail");
+  let rows = blockResults.map(b =>
+    `<tr><td>${b.name}</td><td>${b.score}</td><td>${b.max}</td></tr>`
+  ).join('');
+
+  result.innerHTML = `
+    <div class="result-title ${statusClass}">${status}</div>
+    <p style="text-align:center; color:var(--vdv);">${decision}</p>
+    <table class="score-table">
+      <tr><th>Блок</th><th>Баллы</th><th>Макс.</th></tr>
+      ${rows}
+      <tr><td><strong>ИТОГО</strong></td><td><strong>${total}</strong></td><td><strong>${max}</strong></td></tr>
+      <tr><td><strong>ПРОЦЕНТ</strong></td><td colspan="2"><strong>${percent.toFixed(1)}%</strong></td></tr>
+      <tr><td><strong>КРАСНЫЕ ФЛАГИ</strong></td><td colspan="2"><strong>${flags} (при 2+ — отказ)</strong></td></tr>
+    </table>
+    <p style="margin-top:20px; color:var(--muted); font-size:0.8em; text-align:center; letter-spacing:2px;">
+      ДАТА: ${new Date().toLocaleString('ru-RU')}
+    </p>
+  `;
+
+  result.scrollIntoView({behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>
