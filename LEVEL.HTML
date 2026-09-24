@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ГРУ · ПРОТОКОЛ ПОВЫШЕНИЯ</title>
+<style>
+  :root{
+    --bg:#0a0f14; --card:#111820; --card2:#182230; --border:#243244;
+    --gru:#00a8e8; --vdv:#4fc3f7; --green:#4caf50; --red:#e53935;
+    --yellow:#ffb300; --text:#d0d8e0; --muted:#7a8899; --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,rgba(0,168,232,0.05) 0%,transparent 300px),
+    repeating-linear-gradient(45deg,#0a0f14,#0a0f14 10px,#0c1219 10px,#0c1219 20px);
+    color:var(--text); font-family:'Courier New',monospace;
+    line-height:1.6; padding:20px; max-width:1000px; margin:0 auto;
+  }
+  header{
+    text-align:center; padding:30px 20px;
+    background:linear-gradient(135deg,#111820,#182230);
+    border:2px solid var(--gru); border-radius:4px; margin-bottom:25px;
+    position:relative;
+  }
+  header::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg,var(--gru),var(--vdv),var(--gru));
+  }
+  header h1{
+    color:var(--white); font-size:1.8em; letter-spacing:3px;
+    text-transform:uppercase; text-shadow:0 0 20px rgba(0,168,232,0.6);
+    margin-bottom:8px;
+  }
+  header h1 span{color:var(--gru);}
+  header p{color:var(--vdv); font-size:0.85em; letter-spacing:2px; text-transform:uppercase;}
+  .badge{
+    display:inline-block; background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; padding:5px 15px; border-radius:2px;
+    font-size:0.7em; font-weight:700; margin-top:10px;
+    letter-spacing:2px; text-transform:uppercase;
+  }
+  .section{
+    background:var(--card); border:1px solid var(--border);
+    border-left:4px solid var(--gru); border-radius:4px;
+    padding:20px; margin-bottom:20px;
+  }
+  .section-title{
+    color:var(--vdv); font-size:1.05em; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:10px; display:flex; align-items:center; gap:10px;
+  }
+  .section-title::before{content:"◤"; color:var(--gru);}
+  .section-desc{color:var(--muted); font-size:0.8em; letter-spacing:1px; margin-bottom:15px; padding-left:20px;}
+  .step{
+    background:var(--card2); border:1px solid var(--border);
+    border-radius:3px; padding:15px; margin-bottom:12px;
+    display:flex; gap:15px; align-items:flex-start;
+  }
+  .step-num{
+    display:inline-block; background:var(--gru); color:#000;
+    min-width:36px; height:32px; line-height:32px; text-align:center;
+    font-weight:700; font-size:0.85em; flex-shrink:0;
+  }
+  .step-content{flex:1;}
+  .step-title{color:var(--white); font-weight:700; margin-bottom:8px;}
+  .step-text{color:var(--text); font-size:0.9em;}
+  .step-text ul{padding-left:20px; margin-top:8px;}
+  .step-text li{margin-bottom:5px;}
+  .badge-green{background:var(--green); color:#fff; padding:2px 8px; border-radius:3px; font-size:0.8em; font-weight:700;}
+  .badge-red{background:var(--red); color:#fff; padding:2px 8px; border-radius:3px; font-size:0.8em; font-weight:700;}
+  .badge-yellow{background:var(--yellow); color:#000; padding:2px 8px; border-radius:3px; font-size:0.8em; font-weight:700;}
+  .badge-blue{background:var(--gru); color:#000; padding:2px 8px; border-radius:3px; font-size:0.8em; font-weight:700;}
+  .warn{
+    background:#2d1618; border:1px solid var(--red);
+    border-radius:6px; padding:15px; margin:15px 0;
+  }
+  .warn-title{color:var(--red); font-weight:700; margin-bottom:8px;}
+  .ok{
+    background:#12261a; border:1px solid var(--green);
+    border-radius:6px; padding:15px; margin:15px 0;
+  }
+  .ok-title{color:var(--green); font-weight:700; margin-bottom:8px;}
+  .info{
+    background:#1a2332; border:1px solid var(--gru);
+    border-radius:6px; padding:15px; margin:15px 0;
+  }
+  .info-title{color:var(--gru); font-weight:700; margin-bottom:8px;}
+  .footer{
+    text-align:center; color:var(--muted); font-size:0.75em;
+    margin-top:40px; padding-top:20px;
+    border-top:1px solid var(--border); letter-spacing:3px; text-transform:uppercase;
+  }
+  .footer-star{color:var(--gru); margin:0 10px;}
+  table{width:100%; border-collapse:collapse; margin:10px 0;}
+  th,td{border:1px solid var(--border); padding:10px; text-align:left; font-size:0.85em;}
+  th{background:#0d141c; color:var(--vdv); text-transform:uppercase; letter-spacing:1px; font-size:0.8em;}
+  a{color:var(--vdv); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .emoji{font-size:1.2em; margin-right:5px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ГРУ <span>·</span> ПРОТОКОЛ ПОВЫШЕНИЯ</h1>
+  <p>Проверка отчётов · Рапорты · Кадровый аудит</p>
+  <div class="badge">ТОЛЬКО ДЛЯ ИНСТРУКТОРСКОГО СОСТАВА</div>
+</header>
+
+<!-- РАЗДЕЛ 1 -->
+<div class="section">
+  <div class="section-title">Раздел 1 · Общие правила</div>
+  <div class="section-desc">► Действуют для всех инструкторов и старших инструкторов</div>
+
+  <div class="step">
+    <span class="step-num">1.1</span>
+    <div class="step-content">
+      <div class="step-title">Приоритет проверки</div>
+      <div class="step-text">
+        Отчёт берёт <strong>первый свободный инструктор</strong>. Если инструкторов нет — <strong>старший инструктор</strong>, затем — <strong>командир/заместитель</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">1.2</span>
+    <div class="step-content">
+      <div class="step-title">Реакции</div>
+      <div class="step-text">
+        <ul>
+          <li><span class="emoji">👁️</span> — <strong>взял заявку на проверку</strong>. Другие не трогают.</li>
+          <li><span class="emoji">✅</span> — <strong>одобрено</strong>.</li>
+          <li><span class="emoji">❌</span> — <strong>отказ</strong> (указать причину).</li>
+          <li><span class="emoji">☎️</span> — <strong>обзвон</strong> (назначить).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">1.3</span>
+    <div class="step-content">
+      <div class="step-title">Субординация</div>
+      <div class="step-text">Младший по должности не перебивает старшего. Если взялся за заявку — доводи до конца.</div>
+    </div>
+  </div>
+</div>
+
+<!-- РАЗДЕЛ 2 -->
+<div class="section">
+  <div class="section-title">Раздел 2 · Проверка отчёта</div>
+  <div class="section-desc">► Канал: <a href="#">#отчёты-на-повышение</a></div>
+
+  <div class="step">
+    <span class="step-num">2.1</span>
+    <div class="step-content">
+      <div class="step-title">Форма подачи</div>
+      <div class="step-text">Отчёт должен соответствовать <strong>закреплённому сообщению</strong> в канале.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2.2</span>
+    <div class="step-content">
+      <div class="step-title">Баллы</div>
+      <div class="step-text">Сверить с <strong>системой повышения</strong>: звание / кол-во баллов / обзвон (если нужен).</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2.3</span>
+    <div class="step-content">
+      <div class="step-title">Планшет</div>
+      <div class="step-text">
+        <ul>
+          <li>Проверить <strong>скрин планшета</strong>.</li>
+          <li>Лучше — <strong>в игре</strong> открыть личное дело.</li>
+          <li>При наличии <strong>WARN</strong> — <span class="badge-red">автоматический отказ</span>.</li>
+          <li>Проверить <strong>дату последнего повышения</strong> — если уже повышался, пишем: <em>«повышение после 00:00»</em>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2.4</span>
+    <div class="step-content">
+      <div class="step-title">Скриншоты</div>
+      <div class="step-text">
+        <ul>
+          <li><strong>Статик</strong> — виден.</li>
+          <li><strong>Бодикамера</strong> — включена.</li>
+          <li><strong>Дата и время</strong> — указаны.</li>
+          <li>Если есть сомнения — <strong>сверить с предыдущим повышением</strong>, чтобы не было повторных кадров.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2.5</span>
+    <div class="step-content">
+      <div class="step-title">Решение</div>
+      <div class="step-text">
+        <ul>
+          <li><span class="emoji">✅</span> — <strong>одобрено</strong>.</li>
+          <li><span class="emoji">❌</span> — <strong>отказ</strong>.</li>
+          <li><span class="emoji">☎️</span> — <strong>обзвон</strong>.</li>
+          <li><span class="emoji">⏰</span> — <strong>если уже повышался</strong> → «пиши после 00:00».</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- РАЗДЕЛ 3 -->
+<div class="section">
+  <div class="section-title">Раздел 3 · Ответ на отчёт</div>
+  <div class="section-desc">► Только при одобрении</div>
+
+  <div class="ok">
+    <div class="ok-title">✅ Шаблон ответа при одобрении:</div>
+    <p>«Отчёт принят. <strong>Подать рапорт на повышение</strong> → <a href="#">#рапорты-на-повышение</a>».</p>
+  </div>
+
+  <div class="warn">
+    <div class="warn-title">❌ Шаблон ответа при отказе:</div>
+    <p>«Отчёт отклонён. Причина: [указать]. Исправьте и подайте повторно».</p>
+  </div>
+
+  <div class="info">
+    <div class="info-title">☎️ Шаблон при обзвоне:</div>
+    <p>«Требуется обзвон. Записаться: [ссылка]».</p>
+  </div>
+</div>
+
+<!-- РАЗДЕЛ 4 -->
+<div class="section">
+  <div class="section-title">Раздел 4 · Рапорт</div>
+  <div class="section-desc">► После подачи рапорта</div>
+
+  <div class="step">
+    <span class="step-num">4.1</span>
+    <div class="step-content">
+      <div class="step-title">Проверка рапорта</div>
+      <div class="step-text">Форма, содержание, соответствие отчёту. Взялся — ставь <span class="emoji">👁️</span>.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">4.2</span>
+    <div class="step-content">
+      <div class="step-title">Ссылка на рапорт</div>
+      <div class="step-text">Копируешь ссылку 🔗 на сообщение — она пойдёт в Кадровый аудит.</div>
+    </div>
+  </div>
+</div>
+
+<!-- РАЗДЕЛ 5 -->
+<div class="section">
+  <div class="section-title">Раздел 5 · Кадровый аудит</div>
+  <div class="section-desc">► Канал: <a href="#">#кадровый-аудит</a></div>
+
+  <div class="step">
+    <span class="step-num">5.1</span>
+    <div class="step-content">
+      <div class="step-title">Заполнение формы</div>
+      <div class="step-text">
+        <ul>
+          <li>Пишешь <strong>/</strong> → выбираешь <strong>«Повышение»</strong>.</li>
+          <li>В окне <strong>«пользователь»</strong> — через <strong>@</strong> профиль повышаемого.</li>
+          <li>В окне <strong>«был»</strong> — цифрой текущий ранг.</li>
+          <li>В окне <strong>«стал»</strong> — цифрой целевой ранг.</li>
+          <li>В окне <strong>«причина»</strong> — ссылка 🔗 на рапорт.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="ok">
+    <div class="ok-title">💰 +50 баллов инструктору</div>
+    <p>За <strong>скрин Кадрового аудита</strong> инструктор получает <strong>+50 баллов</strong> к своему повышению. Именно скрин Аудита, а не отчёта!</p>
+  </div>
+</div>
+
+<!-- РАЗДЕЛ 6 -->
+<div class="section">
+  <div class="section-title">Раздел 6 · Роль в Discord</div>
+
+  <div class="step">
+    <span class="step-num">6.1</span>
+    <div class="step-content">
+      <div class="step-title">Смена роли ⭐</div>
+      <div class="step-text">Меняешь у военнослужащего роль <strong>«Звание»</strong> на новое.</div>
+    </div>
+  </div>
+</div>
+
+<!-- РАЗДЕЛ 7 -->
+<div class="section">
+  <div class="section-title">Раздел 7 · Повышение в игре</div>
+  <div class="section-desc">► Кто и как повышает в игре</div>
+
+  <div class="step">
+    <span class="step-num">7.1</span>
+    <div class="step-content">
+      <div class="step-title">Со звания Майор</div>
+      <div class="step-text">С <strong>Майора</strong> инструктор <strong>сам повышает в игре</strong> через планшет. Пометка: <strong>«КА»</strong> (Кадровый аудит).</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">7.2</span>
+    <div class="step-content">
+      <div class="step-title">До Майора</div>
+      <div class="step-text">
+        Тот, у кого <strong>не позволяет ранг</strong> (до Майора):
+        <ul>
+          <li>Проводит <strong>полную процедуру</strong> повышения (роль, Аудит).</li>
+          <li>Ставит <strong>ссылку 🔗 на Аудит</strong> в канал.</li>
+          <li>Тегает <strong>старший состав</strong> с просьбой повысить в игре.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">7.3</span>
+    <div class="step-content">
+      <div class="step-title">Отметка «выполнено»</div>
+      <div class="step-text">Тот, кто повысил в игре — ставит <span class="emoji">✅</span> «выполнено» на сообщение.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ТАБЛИЦА -->
+<div class="section">
+  <div class="section-title">Кто берёт отчёт</div>
+  <table>
+    <tr><th>Ситуация</th><th>Кто берёт</th></tr>
+    <tr><td>Есть свободный инструктор</td><td>Инструктор</td></tr>
+    <tr><td>Инструкторов нет</td><td>Старший инструктор</td></tr>
+    <tr><td>Старших нет</td><td>Командир / заместитель</td></tr>
+    <tr><td>Отчёт уже взят (👁️)</td><td>Никто не трогает</td></tr>
+  </table>
+</div>
+
+<!-- ЗАПРЕТЫ -->
+<div class="section" style="border-left-color:var(--red);">
+  <div class="section-title" style="color:var(--red);">Запрещено</div>
+  <div class="section-desc">► Нарушение — дисциплинарное взыскание</div>
+
+  <div class="warn">
+    <div class="warn-title">Инструктору запрещено:</div>
+    <ul style="padding-left:20px;">
+      <li>Брать отчёт, если его уже взял другой (👁️).</li>
+      <li>Ставить ✅ без полной проверки.</li>
+      <li>Повышать при наличии WARN.</li>
+      <li>Повышать дважды за сутки (до 00:00).</li>
+      <li>Повышать в обход Кадрового аудита.</li>
+      <li>Нарушать субординацию при проверке.</li>
+      <li>Ставить 🚽 (шутка, не ставим).</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  <span class="footer-star">★</span>
+  ГРУ · ПРОТОКОЛ ПОВЫШЕНИЯ · СИЛА В ТЕНИ
+  <span class="footer-star">★</span>
+</div>
+
+</body>
+</html>
