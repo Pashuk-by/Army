@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ГРУ · НАБОР · ЭЛИТА ВООРУЖЁННЫХ СИЛ</title>
+<style>
+  :root{
+    --bg:#0a0f14; --card:#111820; --card2:#182230; --border:#243244;
+    --gru:#00a8e8; --vdv:#4fc3f7; --green:#4caf50; --red:#e53935;
+    --yellow:#ffb300; --text:#d0d8e0; --muted:#7a8899; --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,rgba(0,168,232,0.05) 0%,transparent 300px),
+    repeating-linear-gradient(45deg,#0a0f14,#0a0f14 10px,#0c1219 10px,#0c1219 20px);
+    color:var(--text); font-family:'Courier New',monospace;
+    line-height:1.7; padding:20px; max-width:1000px; margin:0 auto;
+  }
+
+  /* ШАПКА-ОБЛОЖКА */
+  header{
+    text-align:center; padding:50px 20px;
+    background:
+      linear-gradient(135deg,rgba(0,168,232,0.15),rgba(0,0,0,0.8)),
+      linear-gradient(180deg,#111820,#0a0f14);
+    border:2px solid var(--gru); border-radius:4px; margin-bottom:25px;
+    position:relative; overflow:hidden;
+  }
+  header::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:5px;
+    background:linear-gradient(90deg,var(--gru),var(--vdv),var(--gru));
+  }
+  header h1{
+    color:var(--white); font-size:2.4em; letter-spacing:6px;
+    text-transform:uppercase; text-shadow:0 0 30px rgba(0,168,232,0.8);
+    margin-bottom:12px; font-weight:900;
+  }
+  header h1 span{color:var(--gru);}
+  header .subtitle{
+    color:var(--vdv); font-size:1em; letter-spacing:4px;
+    text-transform:uppercase; margin-bottom:15px;
+  }
+  header .motto{
+    color:var(--white); font-style:italic; font-size:1.1em;
+    margin-top:20px; opacity:0.9;
+  }
+  .badge{
+    display:inline-block; background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; padding:8px 25px; border-radius:2px;
+    font-size:0.85em; font-weight:700; margin-top:15px;
+    letter-spacing:3px; text-transform:uppercase;
+  }
+
+  /* СЕКЦИИ */
+  .section{
+    background:var(--card); border:1px solid var(--border);
+    border-left:4px solid var(--gru); border-radius:4px;
+    padding:25px; margin-bottom:20px;
+  }
+  .section-title{
+    color:var(--vdv); font-size:1.2em; font-weight:700;
+    letter-spacing:3px; text-transform:uppercase;
+    margin-bottom:15px; display:flex; align-items:center; gap:12px;
+  }
+  .section-title::before{content:"◤"; color:var(--gru); font-size:1.3em;}
+
+  /* ВСТУПЛЕНИЕ */
+  .intro{
+    background:var(--card2); border:1px solid var(--border);
+    border-radius:4px; padding:25px; margin-bottom:20px;
+    text-align:center; font-size:1.05em;
+  }
+  .intro strong{color:var(--gru);}
+
+  /* БЛОКИ "ПОЧЕМУ МЫ" */
+  .reason{
+    display:flex; gap:15px; align-items:flex-start;
+    padding:15px; margin-bottom:10px;
+    background:var(--card2); border-radius:3px;
+    border-left:3px solid var(--gru);
+  }
+  .reason-icon{font-size:1.5em; flex-shrink:0;}
+  .reason-text{flex:1; color:var(--text);}
+  .reason-text strong{color:var(--white);}
+
+  /* ЗАДАЧИ */
+  .task{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 15px; margin-bottom:8px;
+    background:var(--card2); border-radius:3px;
+  }
+  .task-icon{font-size:1.3em; flex-shrink:0;}
+  .task-text{color:var(--text);}
+
+  /* ТРЕБОВАНИЯ */
+  .req{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 15px; margin-bottom:8px;
+    background:var(--card2); border-radius:3px;
+    border-left:3px solid var(--yellow);
+  }
+  .req-icon{color:var(--yellow); font-size:1.2em; flex-shrink:0;}
+  .req-text{color:var(--text);}
+  .req-text strong{color:var(--white);}
+
+  /* ФИНАЛ */
+  .final{
+    text-align:center; padding:35px 20px;
+    background:linear-gradient(135deg,rgba(0,168,232,0.2),rgba(0,0,0,0.6));
+    border:2px solid var(--gru); border-radius:4px;
+    margin:25px 0;
+  }
+  .final-title{
+    color:var(--white); font-size:1.5em; font-weight:900;
+    letter-spacing:3px; text-transform:uppercase;
+    margin-bottom:15px; text-shadow:0 0 20px rgba(0,168,232,0.6);
+  }
+  .final-title span{color:var(--gru);}
+  .final-text{color:var(--vdv); font-size:1.05em; margin-bottom:20px;}
+
+  /* КНОПКА-ССЫЛКА */
+  .cta{
+    display:inline-block;
+    background:linear-gradient(135deg,var(--gru),var(--vdv));
+    color:#000; padding:15px 40px; border-radius:3px;
+    font-size:1em; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; text-decoration:none;
+    transition:all 0.2s;
+  }
+  .cta:hover{
+    box-shadow:0 0 30px rgba(0,168,232,0.8);
+    transform:translateY(-2px);
+  }
+
+  /* ДЕВИЗЫ ВНИЗУ */
+  .mottos{
+    display:flex; justify-content:space-around; flex-wrap:wrap;
+    gap:15px; padding:20px; margin-top:20px;
+    background:var(--card); border:1px solid var(--border); border-radius:4px;
+  }
+  .motto-item{
+    color:var(--muted); font-size:0.85em; letter-spacing:2px;
+    text-transform:uppercase;
+  }
+  .motto-item span{color:var(--gru);}
+
+  /* ФУТЕР */
+  .footer{
+    text-align:center; color:var(--muted); font-size:0.75em;
+    margin-top:40px; padding-top:20px;
+    border-top:1px solid var(--border); letter-spacing:3px; text-transform:uppercase;
+  }
+  .footer-star{color:var(--gru); margin:0 10px;}
+
+  a{color:var(--vdv); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<!-- ШАПКА -->
+<header>
+  <h1>СПЕЦНАЗ <span>ГРУ</span></h1>
+  <div class="subtitle">Элита Вооружённых Сил</div>
+  <div class="motto">«Там, где другие не могут — ты есть»</div>
+  <div class="badge">НАБОР ОТКРЫТ</div>
+</header>
+
+<!-- ВСТУПЛЕНИЕ -->
+<div class="intro">
+  Товарищи военнослужащие! Если вы пришли в Вооружённые Силы, чтобы стать сильнее —<br>
+  если знаете цену боевому братству и готовы с честью взять ответственность за безопасность страны —<br>
+  <strong>Спецназ ГРУ ждёт тебя.</strong>
+</div>
+
+<!-- ПОЧЕМУ МЫ -->
+<div class="section">
+  <div class="section-title">Почему именно мы?</div>
+
+  <div class="reason">
+    <span class="reason-icon">🦅</span>
+    <div class="reason-text"><strong>Результат вместо слов.</strong> Мы не просто выезжаем на вызовы — мы берём под контроль самые важные точки и объекты.</div>
+  </div>
+
+  <div class="reason">
+    <span class="reason-icon">🎯</span>
+    <div class="reason-text"><strong>Слаженность и огневая мощь.</strong> Отбитие бизнесов, сопровождение поставок и борьба за аирдропы отрабатываются до автоматизма.</div>
+  </div>
+
+  <div class="reason">
+    <span class="reason-icon">🤝</span>
+    <div class="reason-text"><strong>Братство и поддержка.</strong> В оперативном отряде ты получишь плечо, на которое можно положиться под любым перекрёстным огнём.</div>
+  </div>
+
+  <div class="reason">
+    <span class="reason-icon">📈</span>
+    <div class="reason-text"><strong>Конкретные задачи.</strong> От сопровождения ценных крафтов до силовой ликвидации угроз на пушах и рейдах.</div>
+  </div>
+
+  <div class="reason">
+    <span class="reason-icon">📚</span>
+    <div class="reason-text"><strong>Постоянное обучение.</strong> Инструкторы работают с составом и помогают совершенствовать навыки.</div>
+  </div>
+</div>
+
+<!-- ЗАДАЧИ -->
+<div class="section">
+  <div class="section-title">Что тебя ждёт?</div>
+
+  <div class="task">
+    <span class="task-icon">⚔️</span>
+    <span class="task-text">Постоянная боевая практика: отбитие бизнесов, сопровождение поставок и захват аирдропов.</span>
+  </div>
+
+  <div class="task">
+    <span class="task-icon">📊</span>
+    <span class="task-text">Прозрачная система повышений и баллов за каждую выполненную спецоперацию.</span>
+  </div>
+
+  <div class="task">
+    <span class="task-icon">🛡️</span>
+    <span class="task-text">Современная экипировка, тактическая подготовка и работа в составе сработанных групп.</span>
+  </div>
+
+  <div class="task">
+    <span class="task-icon">⭐</span>
+    <span class="task-text">Карьерный рост от старшего сержанта до командных должностей.</span>
+  </div>
+</div>
+
+<!-- ТРЕБОВАНИЯ -->
+<div class="section">
+  <div class="section-title">Требования к кандидатам</div>
+
+  <div class="req">
+    <span class="req-icon">◆</span>
+    <div class="req-text">Звание: <strong>не ниже Сержанта (4)</strong>.</div>
+  </div>
+
+  <div class="req">
+    <span class="req-icon">◆</span>
+    <div class="req-text">Высокая дисциплина, адекватность и способность работать в команде.</div>
+  </div>
+
+  <div class="req">
+    <span class="req-icon">◆</span>
+    <div class="req-text">Отличное владение оружием и уверенная езда в колонне / на перехватах.</div>
+  </div>
+
+  <div class="req">
+    <span class="req-icon">◆</span>
+    <div class="req-text">Высокая активность и готовность оперативно выезжать по коду.</div>
+  </div>
+
+  <div class="req">
+    <span class="req-icon">◆</span>
+    <div class="req-text">Знание уставов и правил поставок.</div>
+  </div>
+</div>
+
+<!-- ФИНАЛ -->
+<div class="final">
+  <div class="final-title">Готов доказать, что ты <span>способен на большее</span>?</div>
+  <div class="final-text">Если ты готов давать жёсткий и эффективный отпор крайму — твоё место в наших рядах.</div>
+  <a href="https://discord.com/channels/1538938584441163776/1538938591009308725" class="cta">📩 Подать заявку</a>
+</div>
+
+<!-- ДЕВИЗЫ -->
+<div class="mottos">
+  <div class="motto-item">Сила <span>в людях</span></div>
+  <div class="motto-item">Задача <span>в результате</span></div>
+  <div class="motto-item">Не словами, <span>а делами</span></div>
+</div>
+
+<!-- ФУТЕР -->
+<div class="footer">
+  <span class="footer-star">★</span>
+  ГРУ · ВДВ · СИЛА В ТЕНИ
+  <span class="footer-star">★</span>
+</div>
+
+</body>
+</html>
